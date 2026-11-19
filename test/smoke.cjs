@@ -27,11 +27,21 @@ vm.runInContext(`
   assert.equal(new Set(SEGMENTS.map(s => s.key)).size, 216);
   assert.equal(CANDIDATES.length, 6);
   for (const [a, b] of [[true, false], [false, true], [true, true]]) {
-    assert.equal(CANDIDATES.filter(s => s.a === a && s.b === b).length, 2);
+    assert.equal(CANDIDATES.filter(s => s.a === a && s.alertB === b).length, 2);
   }
   assert.ok(CANDIDATES.every(s => s.gaps.every(g => g >= .30)));
   assert.match($('candidateCount').textContent, /6개/);
   assert.equal(($('alerts').innerHTML.match(/data-action="alert"/g) || []).length, 6);
+  for (const alert of CANDIDATES) {
+    setState('alert', alert.key);
+    render();
+    const matches = matching();
+    assert.equal(matches.length, 1);
+    assert.equal(matches[0].key, alert.key);
+    assert.equal(alert.b, matches[0].b);
+    assert.ok($('alerts').innerHTML.includes(alert.b));
+    assert.match($('path').innerHTML, /가상 .+급부/);
+  }
   const candidate = CANDIDATES[0];
   for (const [action, value, expected] of [
     ['alert', candidate.key, '간편고지 × 무·저해지'],
