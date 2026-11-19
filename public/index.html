@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="가상 보험 포트폴리오의 위험률차손익 조기경보 데모">
+<title>위험률차손익 조기경보 | 합성 데이터 데모</title>
+<style>
+:root{color-scheme:light;--ink:#14213c;--sub:#495a76;--line:#dce4f0;--bg:#f2f6fb;--brand:#184acc;--hot:#b42318;--good:#08744e;--card:#fff}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,"Malgun Gothic",sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}button,select{font:inherit}button{cursor:pointer}button:focus-visible,select:focus-visible{outline:3px solid #4e73ec;outline-offset:3px}header{background:#12254b;color:#fff}header div,main,footer{max-width:1260px;margin:auto;padding:20px 25px}header div{display:flex;align-items:center;justify-content:space-between;gap:12px;font-weight:740;letter-spacing:.02em}.tag{border:1px solid #aac1ff;border-radius:999px;padding:4px 11px;color:#dce6ff;font-size:.85rem;white-space:nowrap}
+h1,h2,h3,p{margin:0}h1{font-size:clamp(1.75rem,4vw,2.8rem);line-height:1.16;margin:.3rem 0 .7rem;letter-spacing:-.04em}h2{font-size:1.32rem;letter-spacing:-.03em}h3{font-size:1.08rem}.hero{padding:17px 0 22px}.eyebrow{color:var(--brand);font-size:.83rem;font-weight:800;letter-spacing:.08em}.sub,.note{color:var(--sub)}.note{font-size:.9rem;margin:.4rem 0}.synthetic{display:flex;align-items:center;gap:10px;margin-top:13px;background:#e9efff;border:1px solid #c6d4fa;color:#153779;border-radius:10px;padding:9px 13px;font-size:.92rem}.synthetic strong{white-space:nowrap}
+.kpis,.grid,.controls{display:grid;gap:12px}.kpis{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:18px}.grid{grid-template-columns:repeat(auto-fit,minmax(min(235px,100%),1fr))}.controls{grid-template-columns:repeat(4,minmax(0,1fr));margin:15px 0}.card,.panel{border:1px solid var(--line);border-radius:13px;background:var(--card);padding:16px}.kpi-value{font-size:clamp(1.32rem,3vw,2rem);font-weight:770;letter-spacing:-.05em;margin-top:.24rem}.kpi-label{font-size:.92rem;color:var(--sub)}.panel{margin:12px 0;padding:20px}.sect{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px}.rule{background:#f7f9fd;border:1px solid var(--line);border-radius:10px;padding:11px 13px;color:var(--sub);font-size:.9rem;margin-bottom:14px}.rule strong{color:var(--ink)}
+.tabs{display:flex;flex-wrap:wrap;gap:7px;padding:0;margin:0}.tabs button,.minor,.link,.primary{border:1px solid var(--line);border-radius:8px;background:white;color:var(--ink);padding:8px 10px;font-weight:660}.tabs button.active,.primary{background:var(--brand);border-color:var(--brand);color:#fff}.minor:hover,.link:hover,.tabs button:not(.active):hover{background:#edf3ff}.link{color:var(--brand);padding:5px 9px;font-size:.9rem}.filters label{font-weight:680;font-size:.88rem;color:var(--sub);display:block}.filters select{width:100%;border:1px solid var(--line);border-radius:8px;background:white;padding:7px 8px;margin-top:4px;color:var(--ink)}.path{font-size:.88rem;color:var(--sub);margin:12px 0 0}.path b{color:var(--brand)}
+.scroll{overflow:auto;border:1px solid var(--line);border-radius:9px}table{width:100%;border-collapse:collapse;min-width:680px;font-size:.91rem;text-align:left}th,td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:middle}th{background:#f2f5fb;color:#445675;font-size:.86rem;white-space:nowrap}tbody tr:last-child td{border-bottom:0}tr:hover td{background:#f8faff}.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}.badge{display:inline-block;border-radius:999px;padding:2px 7px;margin:1px;font-size:.77rem;font-weight:760;background:#e7edfb;color:#234a9e;white-space:nowrap}.badge.alert{background:#fff0ee;color:#922812}.bad{color:var(--hot)}.good{color:var(--good)}.tile{display:block;text-align:left;width:100%;font:inherit;color:inherit;background:white;border:1px solid var(--line);border-radius:10px;padding:13px}.tile:hover,.tile.chosen{border-color:var(--brand);background:#f1f5ff}.tile strong{display:block}.tile .big{font-size:1.32rem;font-weight:750;margin:4px 0}.empty{padding:18px;background:#f8fafd;border:1px dashed var(--line);border-radius:9px;color:var(--sub)}.chart{display:grid;gap:11px;margin:13px 0}.chart-row{display:grid;grid-template-columns:85px 1fr 110px;align-items:center;gap:10px}.bar-track{position:relative;min-width:0;height:13px;border-radius:7px;background:#e8edf5}.bar{height:100%;background:#da655c;border-radius:7px;min-width:0}.score{font-weight:700}.list{margin:.65rem 0 0;padding-left:1.25rem}.list li{margin:.35rem 0}footer{font-size:.88rem;color:var(--sub);padding-top:6px;padding-bottom:30px}
+@media(max-width:730px){header div,main,footer{padding-left:14px;padding-right:14px}.kpis,.controls{grid-template-columns:repeat(2,minmax(0,1fr))}.panel{padding:14px}.chart-row{grid-template-columns:67px 1fr 88px}.synthetic{align-items:start}.tabs button{padding:7px 8px;font-size:.89rem}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header><div><span>리스크 분석 · 포트폴리오 모니터</span><span class="tag">SYNTHETIC DEMO</span></div></header>
+<main>
+<section class="hero" aria-labelledby="title"><p class="eyebrow">조기경보 / 3개월 모니터링</p><h1 id="title">위험률차손익 조기경보</h1><p class="sub">상품군부터 급부·담보까지, 합계에 가려진 손익 악화 구간을 추적합니다.</p><div class="synthetic"><strong>합성 데이터</strong><span>모든 상품·채널·수치는 가상입니다. 실제 보험사나 상품의 성과를 나타내지 않습니다.</span></div></section>
+<section id="kpis" class="kpis" aria-label="포트폴리오 요약"></section>
+<section class="panel" aria-labelledby="alertsTitle"><div class="sect"><div><h2 id="alertsTitle">먼저 확인할 이상징후</h2><p class="note">상위 그룹의 경보 여부와 무관하게, 동일 상세 조합을 3개월에 걸쳐 비교합니다.</p></div><span id="candidateCount" class="badge"></span></div>
+<div class="rule"><strong>공통</strong> 동일 상세 조합이 3개월 모두 동월 전체 손익률보다 30%p 이상 낮고, 위험보험료가 모두 양수. <strong>A</strong> 열위폭이 매달 확대되고 최신 부족액 1억 원 이상. <strong>B</strong> 최신 부족액과 직전월 대비 악화 영향액이 각각 5천만 원 이상. <strong>A 또는 B</strong> 충족 시 표시합니다. 통계적 유의성 검정은 적용하지 않았습니다.</div>
+<div id="alerts"></div></section>
+<section class="panel" aria-labelledby="exploreTitle"><div class="sect"><div><h2 id="exploreTitle">상세 탐색</h2><p class="note">경보 목록에서 상세를 열거나, 상품군·채널부터 직접 탐색하세요.</p></div><button type="button" class="minor" id="reset">선택 초기화</button></div>
+<nav class="tabs" aria-label="분석 단계" id="tabs"></nav>
+<div class="controls filters" id="filters"></div>
+<p class="path" id="path"></p></section>
+<section class="panel" id="view" aria-live="polite"></section>
+</main>
+<footer>교육용 모형 데이터입니다. 보험료·손익·지급액은 원 단위 값을 백만 원으로 변환해 표시합니다.</footer>
+<script>
+'use strict';
+const MONTHS=['2027-01','2027-02','2027-03'];
+const GROUPS=['가상 건강군','가상 생활군','가상 보장군'];
+const CHANNELS=['가상 채널 A','가상 채널 B','가상 채널 C'];
+const ATTRS=['Y/Y','Y/N','N/Y','N/N'];
+const PRODUCTS=GROUPS.flatMap((g,gi)=>['α','β','γ','δ'].map((p,pi)=>({id:(gi*4+pi+1),g,name:'데모 상품 '+String(gi*4+pi+1).padStart(2,'0')+' '+p,attr:ATTRS[pi]})));
+const BENEFITS=['가상 입원급부','가상 수술급부','가상 회복급부'];
+const RIDERS=['가상 주계약','가상 특약 A'];
+const SEGMENTS=PRODUCTS.flatMap(p=>CHANNELS.flatMap((c,ci)=>BENEFITS.flatMap((b,bi)=>RIDERS.map((r,ri)=>{
+ const k=p.id*67+ci*13+bi*5+ri; 
+ const tag=(p.id===1&&ci===0&&bi===1&&ri===0)?'B':(p.id===5&&ci===1&&bi===0&&ri===1)?'A':(p.id===9&&ci===0&&bi===2&&ri===1)?'AB':(p.id===2&&ci===2&&bi===0&&ri===0)?'A':(p.id===6&&ci===0&&bi===1&&ri===0)?'B':(p.id===10&&ci===1&&bi===2&&ri===0)?'AB':'';
+ const series=MONTHS.map((month,mi)=>{
+   const prem=tag?(105+((k+mi*9)%38))*1e6:(15+((k*3+mi*7)%38))*1e6;
+   const rate=(tag==='A'?[-.29,-.62,-.82]:tag==='B'?[-.40,-.22,-.85]:tag==='AB'?[-.29,-.55,-1.16]:[.19+(k%23)/100,.20+((k+7)%23)/100,.23+((k+13)%23)/100])[mi];
+   return {month,prem,pnl:Math.round(prem*rate)};
+ });
+ return {key:[p.id,ci,bi,ri].join('-'),p,c,b,r,series};
+}))));
+const fold=(segments,mi)=>segments.reduce((a,s)=>({prem:a.prem+s.series[mi].prem,pnl:a.pnl+s.series[mi].pnl}),{prem:0,pnl:0});
+const ratio=x=>x.prem>0?x.pnl/x.prem:null;
+const BASE=MONTHS.map((_,mi)=>ratio(fold(SEGMENTS,mi)));
+const short=(x,mi)=>x.prem*BASE[mi]-x.pnl;
+function evaluate(s){
+  const gaps=s.series.map((x,i)=>BASE[i]-ratio(x));
+  const shortage=short(s.series[2],2), impact=(ratio(s.series[1])-ratio(s.series[2]))*s.series[2].prem;
+  const common=s.series.every((x,i)=>x.prem>0&&gaps[i]>=.30);
+  const a=common&&gaps[0]<gaps[1]&&gaps[1]<gaps[2]&&shortage>=1e8;
+  const b=common&&shortage>=5e7&&impact>=5e7;
+  return {a,b,gaps,shortage,impact};
+}
+const CANDIDATES=SEGMENTS.map(s=>({...s,...evaluate(s)})).filter(s=>s.a||s.b).sort((x,y)=>y.shortage-x.shortage);
+const STEPS=['상품군 × 채널','간편고지 × 무·저해지','상품 × 급부','주계약 × 특약','월별 추이','정량 분석 종합'];
+const initial=()=>({stage:0,mi:2,g:'',c:'',attr:'',p:0,b:'',r:''});
+let state=initial();
+const $=id=>document.getElementById(id);
+const money=x=>new Intl.NumberFormat('ko-KR',{maximumFractionDigits:1,minimumFractionDigits:1}).format(x/1e6);
+const pct=x=>x==null?'—':(x*100).toFixed(1)+'%';
+const pp=x=>x==null?'—':(x*100).toFixed(1)+'%p';
+const pos=x=>x>0?'bad':'good';
+const color=x=>x<0?'bad':'good';
+const won=x=>money(x)+'백만 원';
+const esc=x=>String(x).replace(/[&<>"']/g,z=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[z]));
+const table=(headers,rows)=>rows.length?'<div class="scroll"><table><thead><tr>'+headers.map(h=>'<th scope="col">'+h+'</th>').join('')+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+r.map((cell,i)=>'<td class="'+(String(cell).includes('data-num')?'num':'')+'">'+cell+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>':'<p class="empty">이 범위에 표시할 항목이 없습니다.</p>';
+const n=(txt,cls='')=>'<span data-num class="'+cls+'">'+txt+'</span>';
+const btn=(label,action,value,cls='link')=>'<button type="button" class="'+cls+'" data-action="'+action+'" data-value="'+esc(value)+'">'+esc(label)+'</button>';
+const badge=s=>[s.a?'A 지속 악화':'',s.b?'B 최근 급격 악화':''].filter(Boolean).map(x=>'<span class="badge alert">'+x+'</span>').join('');
+function matching({g=state.g,c=state.c,attr=state.attr,p=state.p,b=state.b,r=state.r}={}){
+ return SEGMENTS.filter(s=>(!g||s.p.g===g)&&(!c||s.c===c)&&(!attr||s.p.attr===attr)&&(!p||s.p.id===p)&&(!b||s.b===b)&&(!r||s.r===r));
+}
+function counts(segments){
+ const keys=new Set(segments.map(s=>s.key)); return CANDIDATES.filter(s=>keys.has(s.key)).length;
+}
+function options(label,field,items,current,any){
+ return '<label>'+label+'<select data-field="'+field+'">'+(any?'<option value="">'+any+'</option>':'')+items.map(([v,l])=>'<option value="'+esc(v)+'"'+(v===current?' selected':'')+'>'+esc(l)+'</option>').join('')+'</select></label>';
+}
+function scopes(segments,key){
+ const map=new Map();
+ for(const s of segments){const k=key(s);if(!map.has(k))map.set(k,[]);map.get(k).push(s)}
+ return [...map.entries()];
+}
+function rangeTitle(){
+ const p=PRODUCTS.find(p=>p.id===state.p);
+ return [state.g,state.c,state.attr?'간편·무저 '+state.attr:'',p?.name,state.b,state.r].filter(Boolean).map(esc).join(' · ')||'전체 포트폴리오';
+}
+function summaryRow(s){
+ const x=fold(s,state.mi), gap=short(x,state.mi);
+ return [n(pct(ratio(x)),color(ratio(x))),n(won(x.prem)),n(won(x.pnl),color(x.pnl)),n(won(gap),pos(gap)),n(counts(s)+'건')];
+}
+function section(title,describe,inner){return '<div class="sect"><div><h2>'+title+'</h2><p class="note">'+describe+'</p></div></div>'+inner;}
+const SUM_HEADERS=['손익률','위험보험료','위험차익','기준 대비 부족액','최신 경보 상세키'];
+function render(){
+ const base=fold(SEGMENTS,state.mi);
+ $('kpis').innerHTML=[['표시 기준월',MONTHS[state.mi]],['전체 위험보험료',won(base.prem)],['동월 전체 손익률',pct(BASE[state.mi])],['최신월 경보 상세 조합',CANDIDATES.length+'건']].map(([l,v])=>'<div class="card"><p class="kpi-label">'+l+'</p><p class="kpi-value">'+v+'</p></div>').join('');
+ $('candidateCount').textContent=MONTHS[2]+' · '+CANDIDATES.length+'개 상세 조합';
+ $('alerts').innerHTML=table(['판정','상품군 · 채널','상품 · 급부 · 담보','열위 1월 → 2월 → 3월','최신 부족액','악화 영향액','탐색'],CANDIDATES.map(s=>[badge(s),esc(s.p.g+' · '+s.c),esc(s.p.name+' · '+s.b+' · '+s.r),n(s.gaps.map(pp).join(' / ')),n(won(s.shortage),'bad'),n(won(s.impact)),btn('상세 보기','alert',s.key)]));
+ $('tabs').innerHTML=STEPS.map((label,i)=>'<button type="button" data-action="step" data-value="'+i+'" class="'+(state.stage===i?'active':'')+'" '+(state.stage===i?'aria-current="step"':'')+'>'+esc(label)+'</button>').join('');
+ $('filters').innerHTML=options('기준월','mi',MONTHS.map((m,i)=>[i,m]),state.mi)+options('상품군','g',GROUPS.map(g=>[g,g]),state.g,'전체 상품군')+options('채널','c',CHANNELS.map(c=>[c,c]),state.c,'전체 채널')+options('상품','p',PRODUCTS.filter(p=>(!state.g||p.g===state.g)&&(!state.attr||p.attr===state.attr)).map(p=>[p.id,p.name]),state.p,'전체 상품');
+ $('path').innerHTML='선택 범위: <b>'+rangeTitle()+'</b>';
+ renderStage();
+}
+function renderStage(){
+ let html='';
+ if(state.stage===0){
+   const pairs=scopes(matching(),s=>s.p.g+'|'+s.c);
+   const rows=pairs.map(([k,s])=>[esc(k.replace('|',' × ')),...summaryRow(s),btn('속성 보기','pair',k)]);
+   html=section('상품군 × 채널','선택한 기준월의 손익을 비교합니다. 경보 수는 최신월 기준입니다.',table(['상품군 × 채널',...SUM_HEADERS,'다음 단계'],rows));
+ }else if(state.stage===1){
+   const grid='<div class="grid">'+ATTRS.map(a=>{
+     const s=matching({attr:a,p:0,b:'',r:''}), x=fold(s,state.mi);
+     return '<button type="button" data-action="attr" data-value="'+a+'" class="tile '+(a===state.attr?'chosen':'')+'" aria-pressed="'+(a===state.attr)+'"><strong>간편고지 '+a[0]+' · 무·저해지 '+a[2]+'</strong><p class="big">'+pct(ratio(x))+'</p><p class="note">위험보험료 '+won(x.prem)+'</p><p class="note">기준 대비 부족액 '+won(short(x,state.mi))+' · 경보 '+counts(s)+'건</p></button>';
+   }).join('')+'</div>';
+   html=section('간편고지 × 무·저해지','속성 카드에서 해당 조합의 상품과 급부를 엽니다.',grid+'<p class="note">'+btn('전체 속성으로 상품 보기','allattrs','')+'</p>');
+ }else if(state.stage===2){
+   const s=matching({b:'',r:''});
+   const rows=scopes(s,x=>x.p.id+'|'+x.b).map(([k,v])=>[esc(v[0].p.name),esc(v[0].b),...summaryRow(v),btn('담보 보기','benefit',k)]);
+   html=section('상품 × 급부','상위 합계와 별개로 상품별 급부에서 차이가 나는지 비교합니다.',table(['상품','급부',...SUM_HEADERS,'다음 단계'],rows));
+ }else if(state.stage===3){
+   const rows=scopes(matching({r:''}),s=>s.r).map(([k,s])=>[esc(k),...summaryRow(s),btn('월별 보기','rider',k)]);
+   html=section('주계약 × 특약','같은 상품·급부에서 손익 악화가 어느 담보에 나타나는지 확인합니다.',table(['담보',...SUM_HEADERS,'다음 단계'],rows));
+ }else if(state.stage===4){
+   const s=matching(), series=MONTHS.map((m,i)=>fold(s,i));
+   const chart='<div class="chart" aria-label="기준 대비 열위폭 차트">'+series.map((x,i)=>{
+    const rr=ratio(x), gap=rr==null?null:BASE[i]-rr;
+    const w=Math.min(100,Math.max(0,(gap??0)*60));
+    return '<div class="chart-row"><span>'+MONTHS[i]+'</span><div class="bar-track" aria-hidden="true"><div class="bar" style="width:'+w+'%"></div></div><span class="score">'+pp(gap)+'</span></div>';
+   }).join('')+'</div>';
+   const rows=series.map((x,i)=>[MONTHS[i],n(pct(ratio(x))),n(pct(BASE[i])),n(won(x.prem)),n(won(x.pnl)),n(won(short(x,i)),pos(short(x,i)))]);
+   html=section('월별 추이','선택 범위의 손익률과 각 월 전체 기준을 함께 비교합니다.',chart+table(['기준월','선택 범위 손익률','동월 전체 손익률','위험보험료','위험차익','기준 대비 부족액'],rows)+'<p class="note">'+btn('정량 분석 종합','step',5)+'</p>');
+ }else{
+   const s=matching(), x=fold(s,state.mi), gap=short(x,state.mi), rr=ratio(x), candidates=CANDIDATES.filter(a=>s.some(v=>v.key===a.key));
+   const parts=scopes(s,v=>v.p.name+' · '+v.b+' · '+v.r).map(([label,v])=>[label,short(fold(v,state.mi),state.mi)]).sort((a,b)=>b[1]-a[1]).slice(0,3);
+   const cards=[['위험률차손익률',pct(rr)],['동월 기준 대비 열위',pp(rr==null?null:BASE[state.mi]-rr)],['동월 기준 대비 부족액',won(gap)]].map(([a,b])=>'<div class="card"><p class="kpi-label">'+a+'</p><p class="kpi-value">'+b+'</p></div>').join('');
+   const hit=candidates.length?'<ul class="list">'+candidates.map(a=>'<li>'+esc(a.p.name+' · '+a.c+' · '+a.b+' · '+a.r)+' '+badge(a)+'</li>').join('')+'</ul>':'<p class="note">이 범위에서 최신월의 A/B 조건을 충족한 상세 조합은 없습니다.</p>';
+   const decomp=parts.length?'<ol class="list">'+parts.map(([label,delta])=>'<li>'+esc(label)+' · '+won(delta)+'</li>').join('')+'</ol>':'<p class="note">선택 범위에 값이 없습니다.</p>';
+   html=section('정량 분석 종합','규칙에 따른 점검 순서이며, 원인이나 통계적 유의성을 입증하지 않습니다.','<div class="grid">'+cards+'</div><h3 style="margin-top:14px">해당 범위의 최신 경보</h3>'+hit+'<h3 style="margin-top:14px">부족액 상위 기여 조합</h3>'+decomp);
+ }
+ $('view').innerHTML=html;
+}
+function setState(action,value){
+ switch(action){
+   case 'step':state.stage=Number(value);break;
+   case 'alert':{const s=CANDIDATES.find(x=>x.key===value);if(s)state={...state,stage:1,mi:2,g:s.p.g,c:s.c,attr:s.p.attr,p:s.p.id,b:s.b,r:s.r};break;}
+   case 'pair':{const [g,c]=value.split('|');const a=CANDIDATES.find(s=>s.p.g===g&&s.c===c);
+     state={...state,stage:1,g,c,attr:a?.p.attr??'',p:a?.p.id??0,b:'',r:''};break;}
+   case 'attr':state=value===state.attr?{...state,stage:2}:{...state,stage:2,attr:value,p:0,b:'',r:''};break;
+   case 'allattrs':state={...state,stage:2,attr:'',p:0,b:'',r:''};break;
+   case 'benefit':{const [p,b]=value.split('|');state={...state,stage:3,p:Number(p),b,r:''};break;}
+   case 'rider':state={...state,stage:4,r:value};break;
+ }
+ return state;
+}
+document.addEventListener('click',e=>{
+ const el=e.target.closest('button[data-action]');if(!el)return;
+ const {action,value}=el.dataset;setState(action,value);render();
+ if(action==='alert')$('exploreTitle').scrollIntoView({block:'start'});
+ else if(action==='step')$('tabs').querySelector('.active')?.focus();
+ else {$('view').querySelector('h2')?.setAttribute('tabindex','-1');$('view').querySelector('h2')?.focus();}
+});
+$('filters').addEventListener('change',e=>{
+ const f=e.target.dataset.field;if(!f)return;
+ if(f==='mi')state.mi=Number(e.target.value);
+ else if(f==='p')state={...state,p:Number(e.target.value),b:'',r:''};
+ else state={...state,[f]:e.target.value,attr:'',p:0,b:'',r:''};
+ render();$('filters').querySelector('[data-field="'+f+'"]')?.focus();
+});
+$('reset').addEventListener('click',()=>{state=initial();render();});
+render();
+</script>
+</body>
+</html>
