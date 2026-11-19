@@ -3,10 +3,10 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const root = path.join(__dirname, '..');
-const worker = fs.readFileSync(path.join(root, 'src/csv-core.js'), 'utf8').trimEnd();
+const worker = fs.readFileSync(path.join(root, 'src/csv-core.js'), 'utf8').replace(/\r\n/g, '\n').trimEnd();
 if (/<\/script/i.test(worker)) throw Error('Worker source must not contain a literal closing script tag.');
 const target = path.join(root, 'public/index.html');
-const html = fs.readFileSync(target, 'utf8');
+const html = fs.readFileSync(target, 'utf8').replace(/\r\n/g, '\n');
 const slot = /(<script\b(?=[^>]*\bid=["']csv-worker-source["'])[^>]*>)[\s\S]*?(<\/script>)/g;
 if ([...html.matchAll(slot)].length !== 1) throw Error('Expected exactly one csv-worker-source slot.');
 const output = html.replace(slot, (_, start, end) => start + '\n' + worker + '\n' + end);

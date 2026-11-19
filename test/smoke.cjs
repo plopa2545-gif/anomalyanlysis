@@ -19,6 +19,15 @@ vm.runInContext(`
  assert.ok(SEGMENTS.length>0);
  assert.match($('dataMode').textContent,/기본 데이터/);
  assert.doesNotMatch($('kpis').innerHTML,/가상/);
+ for(const candidate of CANDIDATES){
+   setState('alert',candidate.key);render();
+   assert.equal(state.stage,6,'candidate opens a report in one click');
+   assert.equal($('path').hidden,true,'no staged breadcrumb in report');
+   assert.ok($('view').innerHTML.includes(esc(candidate.p.name)));
+   for(const title of ['1 · 상품군 × 채널','2 · 간편고지 × 무·저해지','3 · 상품 × 급부','4 · 주계약·특약','선정 사유와 3개월 수치 근거','확인할 사항'])assert.ok($('view').innerHTML.includes(title),title);
+   assert.equal(($('view').innerHTML.match(/class="report-witness"/g)||[]).length,Number(candidate.a)+Number(candidate.alertB));
+   assert.doesNotMatch($('view').innerHTML,/NaN|undefined|Infinity/);
+ }
  for(let mi=0;mi<3;mi++){
    const actual=fold(SEGMENTS,mi),expected=defaultData.totals[mi];
    assert.ok(Math.abs(actual.prem-expected.prem)<1);

@@ -49,6 +49,11 @@ body[data-theme="black"] .favorable{color:#9ac5e4}body[data-theme="black"] .matr
 @media(max-width:900px){.presentation-pair{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:600px){.presentation-card{padding:13px}.ps-conclusion{padding:17px 16px}.ps-conclusion h2{font-size:17px}.ps-conclusion p{font-size:14px}.metric-matrix{min-width:380px}.rider-matrix th:first-child{min-width:140px}}
 
+
+.candidate-name{display:block;border:0;padding:3px 0;background:none;color:var(--ink);font:inherit;font-weight:650;text-align:left;cursor:pointer}.candidate-name:hover{color:var(--focus);text-decoration:underline}.alert-table th:nth-child(2){width:40%}.alert-table th:nth-child(5){width:13%}
+.report-header{display:flex;justify-content:space-between;align-items:start;gap:18px;margin-bottom:22px}.report-header h2{font-size:24px;line-height:1.5}.report-eyebrow{font-size:12px;color:var(--sub);margin-bottom:6px}.report-conclusion{border-left:3px solid var(--accent);background:color-mix(in srgb,var(--accent) 6%,var(--card));padding:20px 22px;border-radius:0 12px 12px 0;margin-bottom:22px}.report-conclusion h3{font-size:20px;margin:10px 0}.report-conclusion p{margin:8px 0;line-height:1.7}.report-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.report-card{min-width:0;border:1px solid var(--line);border-radius:12px;padding:18px;background:var(--card)}.report-card h3,.report-section>h3{font-size:17px;margin-bottom:10px}.report-card table{min-width:360px}.report-card th{white-space:normal}.report-card td{font-size:12px}.report-card td:first-child{max-width:210px;overflow-wrap:anywhere}.report-location{color:var(--ink);font-size:14px;line-height:1.7;margin:10px 0}.report-facts{margin:12px 0}.report-facts>div{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}.report-facts dt{color:var(--sub)}.report-facts dd{margin:0;font-weight:650}.report-section{margin-top:24px;padding-top:20px;border-top:1px solid var(--line)}.report-witness{margin-top:16px;padding:18px;border:1px solid var(--line);border-radius:12px}.report-witness>p{font-size:13px;line-height:1.8;margin:10px 0}.report-witness table{min-width:530px}.report-footer{display:flex;gap:10px;justify-content:space-between;margin-top:24px}.candidate-report .list{line-height:1.8;color:var(--sub)}
+@media(max-width:800px){.report-grid{grid-template-columns:minmax(0,1fr)}.report-header{flex-direction:column}.report-header h2{font-size:20px}.report-card{padding:14px}.report-conclusion{padding:16px}.report-witness{padding:12px}}
+
 </style>
 </head>
 <body>
@@ -522,9 +527,9 @@ function renderAlerts(){
  const rows=matches.slice(0,200);
  $('candidateCount').textContent='표시 '+rows.length+'개 / 검색 '+matches.length+'개 / 전체 '+CANDIDATES.length+'개';
  $('alerts').innerHTML=table(['순위','상품군·채널 / 상품','선정 유형','대표 부족액<small>백만원</small>','<span aria-label="분석 선택"></span>'],rows.map(({s,rank})=>[
-   rank,'<small>'+esc(s.p.g+' × '+s.c)+'</small><strong>'+esc(s.p.name)+'</strong>',badge(s),
+   rank,'<small>'+esc(s.p.g+' × '+s.c)+'</small>'+btn(s.p.name,'alert',s.key,'candidate-name'),badge(s),
    '<span data-num class="stacked"><b>'+money(s.shortage)+'</b><small>'+esc(pointLabel(s))+'</small></span>',
-   btn('분석 →','alert',s.key)]));
+   btn('보고서 보기','alert',s.key)]));
 }
 function paintPath(){
  const p=PRODUCTS.find(p=>p.id===state.p);
@@ -533,14 +538,15 @@ function paintPath(){
  $('path').innerHTML=labels.map((label,i)=>'<span class="crumb"><small>'+label+'</small><b>'+esc(values[i])+'</b></span>').join('<span class="sep" aria-hidden="true">›</span>')+'<span class="scope-detail">'+rangeTitle()+'</span>';
 }
 function render(){
- const isAlert=state.stage<0;
- $('alertPanel').hidden=!isAlert;$('path').hidden=isAlert;$('view').hidden=isAlert;
+ const isAlert=state.stage<0, isReport=state.stage===6;
+ $('alertPanel').hidden=!isAlert;$('path').hidden=isAlert||isReport;$('view').hidden=isAlert;
  const cnt=CANDIDATES.length, a=CANDIDATES.filter(x=>x.a).length,b=CANDIDATES.filter(x=>x.alertB).length, both=CANDIDATES.filter(x=>x.a&&x.alertB).length;
  $('kpis').innerHTML='<div class="ct"><strong>'+cnt+'</strong><span><b>개 후보</b><small>중복 제외</small></span></div><div class="split"><span>A · 지속 악화 <b>'+a+'개</b></span><span>B · 최근 급격 악화 <b>'+b+'개</b></span><span class="both">두 조건 모두 '+both+'개</span></div>';
  renderAlerts();
  $('tabs').innerHTML=['경보 후보',...STEPS.map((s,i)=>(i+1)+' · '+s)].map((label,j)=>'<button type="button" data-action="step" data-value="'+(j-1)+'" class="'+(state.stage===j-1?'active':'')+'" '+(state.stage===j-1?'aria-current="page"':'')+'>'+esc(label)+'</button>').join('');
- const filter=options('분석월','mi',MONTHS.map((m,i)=>[i,m.replace('-', '년 ')+'월']),state.mi)+options('배경색','theme',[['','테마 기본'],['white','흰색'],['mist','옅은 청회색'],['black','블랙']],state.theme);
- const scopes=isAlert?'':'<div class="tiny-controls">'+options('상품군','g',GROUPS.map(g=>[g,g]),state.g,'전체 상품군')+options('채널','c',CHANNELS.map(c=>[c,c]),state.c,'전체 채널')+options('상품','p',filterProducts().map(p=>[p.id,p.name]),state.p,'전체 상품')+'</div>';
+ if(isReport)$('tabs').innerHTML=btn('경보 후보','step',-1)+ '<button type="button" class="active" aria-current="page">상품 점검 보고서</button>';
+ const filter=(isReport?'<span class="pill">경보 기준월 '+MONTHS[2]+'</span>':options('분석월','mi',MONTHS.map((m,i)=>[i,m.replace('-', '년 ')+'월']),state.mi))+options('배경색','theme',[['','테마 기본'],['white','흰색'],['mist','옅은 청회색'],['black','블랙']],state.theme);
+ const scopes=isAlert||isReport?'':'<div class="tiny-controls">'+options('상품군','g',GROUPS.map(g=>[g,g]),state.g,'전체 상품군')+options('채널','c',CHANNELS.map(c=>[c,c]),state.c,'전체 채널')+options('상품','p',filterProducts().map(p=>[p.id,p.name]),state.p,'전체 상품')+'</div>';
  $('filters').innerHTML=filter+'<span class="pill">발표용</span><span class="source-note">'+(usingDefault?'첨부 데이터 · 2025년 4·5·6월':'교체한 CSV · 이 탭에서만 표시')+'</span>'+scopes;
  $('dataMode').textContent=usingDefault?'기본 데이터':'PC에서 불러온 데이터';
  $('dataNote').textContent=usingDefault?'2025년 4·5·6월 · 발표 화면':'브라우저 내 분석 · 서버 전송 없음';
@@ -552,6 +558,7 @@ function render(){
  if(!isAlert){paintPath();renderStage();}else{$('path').textContent='';$('view').textContent='';}
  $('clearCsv').hidden=usingDefault&&!activeWorker;
  $('bottom').innerHTML='<span>'+(isAlert?'시작 · 경보 후보':'현재 '+(state.stage+1)+'단계 · '+STEPS[state.stage])+'</span><div>'+(isAlert?'':btn('이전', 'step',state.stage-1)+' ')+(state.stage<5?btn((state.stage+2)+'단계 · '+STEPS[state.stage+1],'step',state.stage+1)+' ':'')+btn('초기화','reset','')+'</div>';
+ if(isReport)$('bottom').innerHTML='';
  if(document.body)document.body.dataset.theme=state.theme;
 }
 // Presentation data always comes from the fixed navigation scope, never a ranked alert's series.
@@ -651,7 +658,45 @@ function renderSummary(){
  return '<section class="ps-summary"><div class="sect"><h2>분석 6단계 · 정량 분석 종합</h2>'+btn('종합 문구 복사','copy-summary','','minor')+'</div><div class="ps-scope"><span>'+monthLabel(MONTHS[state.mi])+'</span><strong>'+esc(report.label)+'</strong></div><div class="ps-conclusion"><h2>'+esc(report.headline)+'</h2>'+report.paragraphs.map(p=>'<p>'+esc(p)+'</p>').join('')+'</div><details class="ps-evidence-detail"><summary>1~5단계 수치 근거</summary><ol class="ps-stage-evidence">'+report.stages.map(([title,text],i)=>'<li><span class="ps-stage-number">'+(i+1)+'</span><div><h3>'+esc(title)+'</h3><p>'+esc(text)+'</p></div></li>').join('')+'</ol></details><div class="ps-evidence-heading">'+btn('5단계 수치 다시 보기','summary-back','','minor')+'</div><div class="ps-notes">'+report.notes.map(p=>'<p>'+esc(p)+'</p>').join('')+'</div><p id="copyStatus" role="status"></p></section>';
 }
 
+function candidateLocation(s){
+ const point=s.point??{};
+ const attrs=s.p.attr?attrLabel(s.p.attr):point.level==='simple'?'간편고지 '+point.detailCode:point.level==='low'?'무저해지 '+point.detailCode:'전체 속성';
+ return [pointLabel(s),s.b,s.r,point.elapsed,point.level==='child'&&point.detailCode?'세부급부 '+point.detailCode:'',attrs].filter(Boolean).join(' · ');
+}
+function reportRanked(rows,key,mi){
+ return scopes(rows,key).map(([label,items])=>({label,items,x:atMonth(items,mi)})).filter(v=>v.x).sort((a,b)=>short(b.x,mi)-short(a.x,mi)||a.label.localeCompare(b.label,'ko'));
+}
+function reportBreakdown(title,rows,mi,caption){
+ const visible=rows.slice(0,3);
+ return '<section class="report-card"><h3>'+title+'</h3><p class="note">'+esc(caption)+'</p>'+table(['구분','손익률','기준 대비 부족액<small>백만원</small>'],visible.map(row=>[esc(row.label),n(pct(ratio(row.x))),n(signedMoney(short(row.x,mi)),short(row.x,mi)>0?'bad':'good')]))+(rows.length>3?'<p class="note">전체 '+rows.length+'개 중 부족액 상위 3개</p>':'')+'</section>';
+}
+function renderCandidateReport(){
+ const s=checkedEvidence();
+ if(!s)return emptyStep('경보 후보 상품을 선택하세요',-1,'경보 후보 목록');
+ const mi=MONTHS.length-1;
+ // The four template blocks share the product/channel identity, not the representative detail's narrow filters.
+ const productRows=matching({g:s.p.g,c:s.c,p:s.p.id,attr:'',b:'',r:''});
+ const rootRows=matching({g:s.p.g,c:s.c,p:0,attr:'',b:'',r:''});
+ const root=atMonth(rootRows,mi), product=atMonth(productRows,mi);
+ const attrs=reportRanked(productRows,x=>attrLabel(x.p.attr),mi);
+ const benefits=reportRanked(productRows,x=>x.b,mi);
+ const contracts=reportRanked(productRows,x=>x.r+' · '+x.b,mi);
+ const witnesses=[];
+ if(s.a)witnesses.push({type:'A · 지속 악화',row:s.aEvidence??s});
+ if(s.alertB)witnesses.push({type:'B · 최근 급격 악화',row:s.bEvidence??s});
+ const facts=witnesses.map(({type,row})=>{
+   const series=row.series;
+   const reason=type.startsWith('A')?'3개월 모두 전체 기준보다 30%p 이상 낮고, 열위폭이 연속 확대되며 최신 부족액이 1억원 이상입니다.':'3개월 모두 전체 기준보다 30%p 이상 낮고, 최신 부족액과 전월 대비 손익률 악화 영향액이 각각 5천만원 이상입니다.';
+   return '<section class="report-witness"><h3>'+type+'</h3><p class="report-location">'+esc(candidateLocation(row))+'</p><p>'+reason+'</p>'+table(['기준월','손익률','전체 기준','열위폭','부족액<small>백만원</small>'],series.map((x,i)=>[esc(monthLabel(MONTHS[i])),n(pct(ratio(x))),n(pct(BASE[i])),n(pp(row.gaps[i])),n(signedMoney(short(x,i)),short(x,i)>0?'bad':'good')]))+(type.startsWith('B')?'<p class="note">전월 대비 악화 영향액: '+money(row.impact)+'백만원 · 같은 지점의 손익률 하락폭 × 최신 위험보험료</p>':'')+'</section>';
+ }).join('');
+ const leading=benefits.find(v=>short(v.x,mi)>0), contract=contracts.find(v=>short(v.x,mi)>0);
+ const headline=[s.a?'지속 악화':'',s.alertB?'최근 급격 악화':''].filter(Boolean).join(' · ');
+ const rootCard='<section class="report-card"><h3>1 · 상품군 × 채널</h3><p class="report-location">'+esc(s.p.g+' × '+s.c)+'</p><dl class="report-facts"><div><dt>구간 손익률</dt><dd>'+pct(root?ratio(root):null)+'</dd></div><div><dt>동월 전체 기준</dt><dd>'+pct(BASE[mi])+'</dd></div><div><dt>선택 상품 손익률</dt><dd>'+pct(product?ratio(product):null)+'</dd></div><div><dt>선택 상품 부족액</dt><dd>'+signedMoney(product?short(product,mi):null)+'백만원</dd></div></dl><p class="note">구간과 상품 전체를 구분해 비교합니다.</p></section>';
+ return '<article class="candidate-report"><div class="report-header"><div><p class="report-eyebrow">상품 점검 보고서 · '+esc(monthLabel(MONTHS[mi]))+'</p><h2>'+esc(s.p.name)+'</h2><p class="note">'+esc(s.p.g+' × '+s.c+' · 상품코드 '+(s.p.code??s.p.id))+'</p></div>'+btn('경보 후보 목록','step',-1,'minor')+'</div><section class="report-conclusion"><div>'+badge(s)+'</div><h3>'+headline+' 조건에 해당합니다.</h3><p>경보 대표 지점: <strong>'+esc(candidateLocation(s))+'</strong></p><p>대표 지점 부족액 <strong>'+money(s.shortage)+'백만원</strong> · 상품 전체 부족액 <strong>'+money(product?short(product,mi):null)+'백만원</strong></p><p class="note">대표 지점의 금액은 상품 전체와 범위가 다릅니다. 아래 네 항목은 같은 상품·채널의 전체 속성 기준으로 함께 확인합니다.</p></section><div class="report-grid">'+rootCard+reportBreakdown('2 · 간편고지 × 무·저해지',attrs,mi,'선택 상품의 속성 조합별 비교 · 전체 급부/담보')+reportBreakdown('3 · 상품 × 급부',benefits,mi,'선택 상품의 급부별 부족액 · 전체 속성')+reportBreakdown('4 · 주계약·특약',contracts,mi,'동일 상품의 코드·급부별 부족액 · 전체 속성')+'</div><section class="report-section"><h3>선정 사유와 3개월 수치 근거</h3><p class="note">A와 B의 충족 지점이 다르면 각각의 근거를 표시합니다. 아래는 대표 경보 지점의 실제 범위이며 위 네 요약 항목과 합산하지 않습니다.</p>'+facts+'</section><section class="report-section"><h3>확인할 사항</h3><ul class="list"><li>'+esc(leading?leading.label+' 급부에서 부족액이 크게 나타납니다. 해당 급부의 지급 증가와 위험보험료 변화를 확인하세요.':'급부 전체 합계에서는 양의 부족액이 확인되지 않습니다. 선정된 세부 지점의 악화가 상위 합계에 가려지는지 확인하세요.')+'</li><li>'+esc(contract?contract.label+'의 세부급부·경과별 분포와 계약 구성을 확인하세요.':'주계약·특약 전체 합계와 선정된 세부 지점의 범위 차이를 확인하세요.')+'</li><li>수치로 확인한 악화 지점입니다. 지급 사유·계약 구성 등 추가 자료 확인 전에는 실제 원인으로 확정하지 않습니다.</li></ul></section><div class="report-footer">'+btn('경보 후보 목록','step',-1,'minor')+btn('단계별 상세 분석','step',0,'minor')+'</div></article>';
+}
+
 function renderStage(){
+ if(state.stage===6){$('view').innerHTML=renderCandidateReport();return;}
  let html='';
  if(state.stage===0){
    const matrixGroups=new Map(scopes(SEGMENTS,s=>JSON.stringify([s.p.g,s.c])));
@@ -791,7 +836,7 @@ function setState(action,value){
    case 'summary-back':state.mi=state.originMonth??state.mi;state.summary=null;state.originMonth=null;state.stage=4;break;
    case 'step':state.stage=Number(value);break;
    case 'reset':resetCsv();break;
-   case 'alert':{const s=CANDIDATES.find(x=>x.key===value);if(s)state={...state,stage:1,mi:2,g:s.p.g,c:s.c,attr:candidateAttr(s),p:s.p.id,b:s.b,r:s.r,evidence:s.key};break;}
+   case 'alert':{const s=CANDIDATES.find(x=>x.key===value);if(s)state={...state,stage:6,mi:2,g:s.p.g,c:s.c,attr:candidateAttr(s),p:s.p.id,b:s.b,r:s.r,evidence:s.key};break;}
    case 'pair':{const [g,c]=JSON.parse(value);const a=CANDIDATES.find(s=>s.p.g===g&&s.c===c);
      state={...state,stage:1,g,c,attr:candidateAttr(a),p:a?.p.id??0,b:'',r:'',evidence:''};break;}
    case 'attr':state=value===state.attr?{...state,stage:2}:{...state,stage:2,attr:value,p:0,b:'',r:'',evidence:''};break;
