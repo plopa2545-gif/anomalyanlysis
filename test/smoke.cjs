@@ -31,6 +31,15 @@ vm.runInContext(`
   }
   assert.ok(CANDIDATES.every(s => s.gaps.every(g => g >= .30)));
   assert.match($('candidateCount').textContent, /6개/);
+  assert.equal(state.stage, -1);
+  assert.equal($('alertPanel').hidden, false);
+  assert.equal($('view').hidden, true);
+  assert.equal(($('tabs').innerHTML.match(/data-action="step"/g) || []).length, 7);
+  $('search').value = 'no such product';
+  handlers.get('search:input')();
+  assert.match($('candidateCount').textContent, /표시 0개/);
+  $('search').value = '';
+  handlers.get('search:input')();
   assert.equal(($('alerts').innerHTML.match(/data-action="alert"/g) || []).length, 6);
   for (const alert of CANDIDATES) {
     setState('alert', alert.key);
@@ -56,10 +65,13 @@ vm.runInContext(`
   }
   handlers.get('filters:change')({target: {dataset: {field: 'mi'}, value: '0'}});
   assert.equal(state.mi, 0);
-  assert.ok($('kpis').innerHTML.includes(MONTHS[0]));
-  handlers.get('reset:click')();
-  assert.equal(state.stage, 0);
+  assert.ok($('filters').innerHTML.includes('2027년 01월'));
+  setState('reset', '');
+  render();
+  assert.equal(state.stage, -1);
   assert.equal(state.mi, 2);
+  setState('step', '0');
+  render();
   assert.equal(($('view').innerHTML.match(/data-action="pair"/g) || []).length, 9);
 `, context);
 console.log('Passed: offline render, unique synthetic segments, A/B rules, six views, month selector, reset');
