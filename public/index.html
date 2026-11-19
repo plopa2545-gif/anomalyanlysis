@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; worker-src blob:; connect-src 'none'; img-src 'none'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="가상 보험 포트폴리오의 위험률차손익 조기경보 데모">
 <title>위험률차손익 조기경보 | 합성 데이터 데모</title>
@@ -9,19 +10,26 @@
 :root{color-scheme:light;--ink:#1a1c1f;--sub:#666;--line:#e6e6e6;--bg:#fafafa;--accent:#99483c;--focus:#3966ad;--card:#fff;--soft:#f8f8f8}
 *{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Malgun Gothic",sans-serif;background:var(--bg);color:var(--ink);line-height:1.48;font-size:14px}body[data-theme="white"]{--bg:#fff}body[data-theme="mist"]{--bg:#f1f4f8}button,select,input{font:inherit}button{cursor:pointer}button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--focus);outline-offset:2px}h1,h2,h3,p{margin:0}h2{font-size:16px;font-weight:650}h3{font-size:14px}header{position:sticky;top:0;z-index:3;background:#fff;border-bottom:1px solid #ececec}.frame{max-width:1440px;margin:auto;padding:0 32px}.headtop{height:45px;display:flex;align-items:center;gap:10px;white-space:nowrap}.headtop h1{font-size:14px;font-weight:660}.headtop .tag{margin-left:auto}.brand-note{color:var(--sub);font-size:11px}.tag,.pill{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:999px;padding:5px 10px;background:white;color:#5d5d5d;font-size:12px;white-space:nowrap}.tag{font-size:10px;font-weight:680;letter-spacing:.07em}.tabs{display:flex;gap:24px;overflow:auto;scrollbar-width:thin;max-width:100%}.tabs button{padding:9px 0 13px;background:transparent;border:0;border-bottom:1px solid transparent;color:#565656;white-space:nowrap;font-size:13px;flex-shrink:0}.tabs button.active{border-bottom-color:#252525;color:#171717;font-weight:620}
 main{padding-top:68px!important;padding-bottom:18px!important}.toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:34px}.toolbar .pill select{border:0;background:none;color:#2d2d2d;min-width:84px;font-size:12px}.toolbar .pill b{font-weight:500;color:#666}.source-note{font-size:12px;color:#535353;margin-left:4px}.tiny-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.tiny-controls select{padding:4px;border:1px solid var(--line);border-radius:6px;color:#444;background:#fff;font-size:12px}.panel{padding:16px 20px;background:var(--card);border:1px solid var(--line);border-radius:20px;margin-bottom:14px}.sect{display:flex;justify-content:space-between;gap:12px;align-items:start;flex-wrap:wrap;margin-bottom:14px}.sub,.note{color:var(--sub)}.note{font-size:12px;margin:5px 0}.headline-count{display:flex;align-items:center;gap:22px;margin:15px 0 16px}.ct{display:flex;align-items:center;gap:8px;line-height:1}.ct strong{font-size:42px;letter-spacing:-.06em;line-height:1}.ct b{font-size:15px}.ct small{display:block;color:#686868;font-size:11px;margin-top:5px}.split{display:flex;align-items:center;flex-wrap:wrap;gap:10px 21px;color:#535353;font-size:12px}.split .both{flex-basis:100%;font-size:11px}.split b{color:#232323}.case{margin-left:auto;border:1px solid #d6dce2!important;background:#edf4f7!important;font-weight:700}.rule{color:#595959;font-size:12px;margin:12px 0 14px}.rule summary{cursor:pointer}.rule p{margin:8px 0}.search-line{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:8px 0 10px}.search-line input{height:38px;width:min(300px,72%);border:1px solid #d6d6d6;border-radius:8px;padding:8px 10px;background:#f7f7f7;color:#242424}.search-line span{color:#686868;font-size:11px;white-space:nowrap}
-.scroll{overflow:auto;border:1px solid var(--line);border-radius:9px}.alert-table .scroll{max-height:430px}.alert-table table{table-layout:fixed}.alert-table th:nth-child(1){width:6%}.alert-table th:nth-child(2){width:43%}.alert-table th:nth-child(3){width:24%}.alert-table th:nth-child(4){width:17%;text-align:right}.alert-table th:nth-child(5){width:10%}.alert-table th{height:59px}.alert-table td{height:65px}table{width:100%;border-collapse:collapse;min-width:640px;text-align:left;font-size:13px}th,td{padding:10px;border-bottom:1px solid var(--line);vertical-align:middle}thead th{position:sticky;top:0;z-index:1;background:#f9f9f9;color:#565656;font-weight:560;font-size:12px;white-space:nowrap}tbody tr:last-child td{border-bottom:0}tr:hover td{background:#fcfcfc}td small,th small,.stacked small{display:block;color:#666;font-size:11px;margin-top:3px}.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}.stacked{display:block}.stacked b{color:var(--accent);font-size:14px}.badge{display:inline-block;border:1px solid #e8dcca;border-radius:5px;padding:2px 6px;margin:1px 3px 1px 0;white-space:nowrap;font-size:10px;font-weight:620;color:#765426;background:#f7f1e5}.badge.b{color:#94493e;border-color:#eed5d2;background:#f8eae8}.bad{color:var(--accent)}.good{color:#317057}.minor,.link,.primary{border:1px solid #ddd;border-radius:7px;background:#fcfcfc;color:#282828;padding:7px 9px;font-size:12px}.minor:hover,.link:hover,.primary:hover{background:#f0f0f0}.primary{font-weight:650}.empty{padding:18px;background:#fafafa;border:1px dashed var(--line);border-radius:8px;color:var(--sub)}
+.scroll{overflow:auto;border:1px solid var(--line);border-radius:9px}.alert-table .scroll{max-height:430px}.alert-table table{table-layout:fixed}.alert-table th:nth-child(1){width:6%}.alert-table th:nth-child(2){width:43%}.alert-table th:nth-child(3){width:24%}.alert-table th:nth-child(4){width:17%;text-align:right}.alert-table th:nth-child(5){width:10%}.alert-table td{overflow-wrap:anywhere}.alert-table th{height:59px}.alert-table td{height:65px}table{width:100%;border-collapse:collapse;min-width:640px;text-align:left;font-size:13px}th,td{padding:10px;border-bottom:1px solid var(--line);vertical-align:middle}thead th{position:sticky;top:0;z-index:1;background:#f9f9f9;color:#565656;font-weight:560;font-size:12px;white-space:nowrap}tbody tr:last-child td{border-bottom:0}tr:hover td{background:#fcfcfc}td small,th small,.stacked small{display:block;color:#666;font-size:11px;margin-top:3px}.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}.stacked{display:block}.stacked b{color:var(--accent);font-size:14px}.badge{display:inline-block;border:1px solid #e8dcca;border-radius:5px;padding:2px 6px;margin:1px 3px 1px 0;white-space:nowrap;font-size:10px;font-weight:620;color:#765426;background:#f7f1e5}.badge.b{color:#94493e;border-color:#eed5d2;background:#f8eae8}.bad{color:var(--accent)}.good{color:#317057}.minor,.link,.primary{border:1px solid #ddd;border-radius:7px;background:#fcfcfc;color:#282828;padding:7px 9px;font-size:12px}.minor:hover,.link:hover,.primary:hover{background:#f0f0f0}.primary{font-weight:650}.empty{padding:18px;background:#fafafa;border:1px dashed var(--line);border-radius:8px;color:var(--sub)}
 .path{display:flex;align-items:center;gap:13px;flex-wrap:wrap;padding:11px 14px;background:#fff;border:1px solid var(--line);border-radius:13px;margin-bottom:14px;color:#484848}.crumb{display:inline-grid;gap:3px}.crumb small{font-size:11px;color:#666}.crumb b{font-size:13px}.sep{font-size:18px;color:#777}.path .scope-detail{margin-left:auto;font-size:11px;color:#666}.bottom-nav{display:flex;justify-content:space-between;align-items:center;color:#666;font-size:12px;padding:1px 4px;margin-bottom:8px}
 .grid{display:grid;gap:11px;grid-template-columns:repeat(auto-fit,minmax(min(215px,100%),1fr))}.card{padding:14px;border:1px solid var(--line);border-radius:10px;background:#fafafa}.kpi-label{font-size:12px;color:#646464}.kpi-value{font-size:22px;font-weight:760;margin-top:3px}
 .matrix{width:100%;min-width:540px;border-collapse:separate;border-spacing:5px}.matrix th,.matrix td{padding:0;border:0}.matrix th{font-size:12px;font-weight:600;background:transparent;color:#333}.matrix thead th{text-align:center;padding:8px}.matrix tbody th{text-align:left;padding:8px}.matrix .cell{width:100%;min-width:95px;display:block;text-align:center;border:1px solid #ddd;border-radius:7px;background:#f5f5f5;color:#282828;padding:4px 8px}.matrix .cell.hot{color:var(--accent);background:#f8eae6;border-color:#e9ccc5}.matrix .cell.cool{color:#386b61;background:#edf5f1;border-color:#d7e8dd}.matrix .cell.selected{outline:2px solid var(--focus);outline-offset:-2px}.matrix .cell:hover,.tile:hover{outline:1px solid #9aacc7}.cell .count{font-size:19px;font-weight:720;line-height:1.2}.cell small{display:block;margin-top:4px;color:#686868;font-size:11px}.attribute{min-width:490px;border-collapse:separate;border-spacing:6px}.attribute th,.attribute td{padding:0;border:none}.attribute th{width:16%;font-size:12px;text-align:left;padding:8px}.attribute thead th{background:#fafafa;text-align:center;padding:9px}.tile{display:block;width:100%;min-height:128px;padding:12px 13px;text-align:right;color:inherit;background:#f6f6f6;border:1px solid #ddd;border-radius:7px}.tile.hot{background:#f5e8e6;border-color:#e7cac5;color:var(--accent)}.tile.chosen{outline:2px solid var(--focus);outline-offset:-2px}.tile .big{font-size:26px;font-weight:760;line-height:1.15}.tile small{display:block;margin:2px 0 9px;color:#5e5e5e;font-size:10px}.tile p{font-size:11px;color:#555;margin:3px 0}.tile strong{color:inherit}
 .chart{display:grid;gap:10px;margin:12px 0}.chart-row{display:grid;grid-template-columns:76px 1fr 90px;align-items:center;gap:9px}.bar-track{height:12px;border-radius:6px;background:#eee}.bar{height:100%;background:#bc796e;border-radius:6px}.score{font-weight:700}.list{margin:.6rem 0 0;padding-left:1.25rem}.list li{margin:.35rem 0}footer{font-size:11px;color:#666;padding-bottom:25px!important}[hidden]{display:none!important}
 @media(max-width:720px){.frame{padding-left:14px;padding-right:14px}.headtop{gap:8px}.brand-note{display:none}.tabs{gap:17px}main{padding-top:24px!important}.toolbar{margin-bottom:18px}.source-note{flex-basis:100%;margin-top:3px}.panel{padding:15px 12px;border-radius:14px}.headline-count{align-items:flex-start;gap:12px;flex-wrap:wrap}.split{gap:7px 12px}.case{margin-left:0}.path{gap:7px}.path .scope-detail{margin-left:0;flex-basis:100%}.headline-count .ct strong{font-size:34px}.chart-row{grid-template-columns:59px 1fr 65px}.scroll table:not(.matrix):not(.attribute){min-width:610px}}
+.import-tools{margin:-20px 0 24px;padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--sub);font-size:12px}.import-tools summary{cursor:pointer;font-weight:650;color:var(--ink)}.import-tools p{margin:7px 0}.import-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0}.import-actions input{float:none;width:min(100%,320px);font-size:12px}.import-status[data-kind="error"]{color:#99483c}.import-status[data-kind="done"]{color:#28634b}.tag.local{background:#eef1fb;color:#304a7c}.scroll{max-width:100%}.matrix td,.matrix th{overflow-wrap:anywhere}.matrix .cell{min-width:74px}.tiny-controls select{max-width:170px}
+@media(max-width:720px){.import-tools{margin:-8px 0 18px}.tiny-controls select{max-width:125px}}
 </style>
 </head>
 <body>
-<header><div class="frame"><div class="headtop"><h1>위험률차손익 조기경보 · 데모</h1><span class="brand-note">합성 포트폴리오 · 발표 화면</span><span class="tag">합성 데이터</span></div>
+<header><div class="frame"><div class="headtop"><h1>위험률차손익 조기경보 · 데모</h1><span class="brand-note" id="dataNote">합성 포트폴리오 · 발표 화면</span><span class="tag" id="dataMode">합성 데이터</span></div>
 <nav class="tabs" aria-label="분석 단계" id="tabs"></nav></div></header>
 <main class="frame">
 <div class="toolbar" id="filters"></div>
+<details class="import-tools" id="csvPanel"><summary>CSV 불러오기 · 4·5·6월</summary>
+<p id="csvInstructions">4월·5월·6월 CSV를 세 개 선택하세요. 파일은 서버로 전송되지 않고 현재 탭의 메모리에서만 처리됩니다. 새로고침하거나 아래에서 지우면 합성 데이터로 돌아갑니다. 새 파일을 선택하면 이전 결과는 사라집니다.</p>
+<div class="import-actions"><input type="file" id="csvFiles" accept=".csv,text/csv" multiple aria-label="4월·5월·6월 CSV 선택" aria-describedby="csvInstructions"><button class="minor" type="button" id="clearCsv" hidden>로컬 데이터 지우기</button></div>
+<p class="import-status" id="csvStatus" role="status" aria-live="polite"></p>
+</details>
 <section class="panel" id="alertPanel" aria-labelledby="alertsTitle">
 <div class="sect"><h2 id="alertsTitle">이번 달 먼저 확인할 경보 후보</h2></div>
 <div class="headline-count" id="kpis"></div>
@@ -31,23 +39,362 @@ main{padding-top:68px!important;padding-bottom:18px!important}.toolbar{display:f
 </details>
 <div class="search-line"><input type="search" id="search" aria-label="경보 후보 검색" placeholder="상품명·채널·급부 검색"><span id="candidateCount" aria-live="polite"></span></div>
 <div id="alerts" class="alert-table"></div>
-<p class="note">대표 부족액은 표시된 상세 조합의 값입니다. 상품 전체 부족액과 다를 수 있습니다. 경보 후보는 가상 분석 기간의 최신월 기준입니다.</p>
+<p class="note" id="alertNote"></p>
 </section>
 <div id="path" class="path" hidden></div>
 <section class="panel" id="view" aria-live="polite" hidden></section>
 <div class="bottom-nav" id="bottom"></div>
 </main>
-<footer class="frame">모든 상품·채널·수치는 합성 데이터입니다. 실제 보험사, 상품, 보험 계약 또는 경영실적과 무관합니다.</footer>
+<footer class="frame" id="dataFooter"></footer>
+<script type="text/plain" id="csv-worker-source">
+/* Browser-local, streaming parser. The Worker never makes a network request. */
+(function (root) {
+'use strict';
+const ALIASES = {
+  month:['CLSG_YM','CLSG_YM_CD','STND_YM','STD_YM','BASE_YM','DATA_YM','YYMM','YYYYMM','월','마감월','마감년월','기준월','기준년월'],
+  group:['PDT_GUBUN','PDT_GRP_NM','PDT_GRP_DV_NM','PDT_CNT_NM','PRDT_GRP_NM','PDT_LCLS_NM','상품군','상품군명','상품그룹','상품그룹명','상품분류'],
+  channel:['BSDP_NM','SLS_CHNL_NM','SALE_CHNL_NM','CHNL_NM','CHNL_DV_NM','SALE_ORG_NM','SLS_ORG_NM','채널','채널명','영업채널','영업채널명','본부','본부명'],
+  code:['AXIS_CD','PDT_AX_CD','PDT_AXIS_CD','PDT_AXSC_CD','PDT_CD','PRDT_CD','상품축코드','상품코드','상품축'],
+  name:['AXIS_NM','PDT_AX_NM','PDT_AXIS_NM','PDT_AXSC_NM','PDT_NM','PRDT_NM','상품축명','상품명','상품이름'],
+  benefit:['BNFT_CL_NM','PDT_BNFT_CL_NM','BNFT_GRP_NM','BNFT_DV_NM','BNFT_NM','급부','급부명','급부구분','급부구분명','급부분류'],
+  contract:['PDT_SCN_CD','SCN_CD','특약코드','계리코드','담보코드','주계약특약코드'],
+  contractType:['SCN_CL_NM','특약구분','담보구분','주계약특약구분'],
+  major:['BNFT_MCL_CD_NEW'],
+  child:['PDT_BNFT_CD','BNFT_CD','세부급부코드','세부급부'],
+  elapsed:['ELPS_PD_NM','경과구분','경과구분명','경과기간'],
+  simple:['SMPC_NTIC_YN','SMPC_YN','간편고지','간편고지여부'],
+  low:['LOWLAP_YN','무저해지','무저해지여부','무·저해지'],
+  prem:['위험보험료','위험보험료금액','위험P','RISK_PREM_AMT','RISK_PRM_AMT','RISK_PM','RISK_PREM'],
+  pnl:['위험차익금액','위험차익','위험률차손익','위험률차손익금액','RISK_PNL_AMT','RISK_PL_AMT','RISK_PROFIT_AMT'],
+};
+const LABELS = {group:'상품군',channel:'채널',code:'상품코드',elapsed:'경과구분',prem:'위험보험료',pnl:'위험차익금액'};
+const REQUIRED = Object.keys(LABELS);
+const DURATION = new Set(['전체','2년이내','1차','2차','3차']);
+const MONTHS_EXPECTED=['2025-04','2025-05','2025-06'];
+const FIELD_LIMIT=128*1024, MAX_ROWS=2_000_000, MAX_BYTES=768*1024*1024;
+const BENEFITS=['사망','장해','진단','입원','수술','실손'];
+const MAX_POINTS=550_000;
+const nkey=s=>s.replace(/^\uFEFF/, '').trim().normalize('NFKC').toUpperCase().replace(/[\s_-]+/g,'');
+const trim=s=>s.trim();
+const LABELS_POINT={simple:'간편고지',low:'무저해지',product:'상품 전체',benefit:'급부',contract:'주계약·특약',child:'세부급부',attr:'간편고지·무저해지',elapsed:'경과구분',elapsedBenefit:'급부 · 경과구분',elapsedContract:'주계약·특약 · 경과구분',elapsedChild:'세부급부 · 경과구분'};
+
+function fail(message) {throw new Error(message);}
+function makeScanner(onRow) {
+  let cells=[], value='', state=0, skipLF=false, row=0;
+  function field() {
+    if(cells.length>=128) fail('열이 128개를 넘습니다.');
+    cells.push(value); value=''; state=0;
+  }
+  function endRow() {
+    field(); row++;
+    if(cells.length!==1 || cells[0].trim()!=='') onRow(cells,row);
+    cells=[];
+  }
+  return {
+    feed(chunk) {
+      for(let i=0;i<chunk.length;i++) {
+        const ch=chunk[i];
+        if(skipLF){skipLF=false;if(ch==='\n') continue;}
+        if(state===1) {
+          if(ch==='"') state=2; else value+=ch;
+        } else if(state===2 && ch==='"') {
+          value+='"'; state=1;
+        } else if(ch===',') {
+          field();
+        } else if(ch==='\r' || ch==='\n') {
+          endRow(); skipLF=ch==='\r';
+        } else if(state===2) {
+          fail('CSV '+(row+1)+'행의 인용부호 형식이 올바르지 않습니다.');
+        } else if(ch==='"') {
+          if(value.length) fail('CSV '+(row+1)+'행의 인용부호 형식이 올바르지 않습니다.');
+          state=1;
+        } else {
+          value+=ch;
+        }
+        if(value.length>FIELD_LIMIT) fail('CSV 항목 길이가 허용 범위를 넘습니다.');
+      }
+    },
+    finish() {
+      if(state===1) fail('마지막 CSV 인용부호가 닫히지 않았습니다.');
+      if(cells.length || value || state) endRow();
+    }
+  };
+}
+function byHeader(row) {
+  const header=new Map();
+  for (let i=0;i<row.length;i++){
+    const k=nkey(row[i]);
+    if(k && header.has(k)) fail('CSV 헤더에 이름이 같은 열이 있습니다.');
+    if(k) header.set(k,i);
+  }
+  const result={};
+  for(const [field, aliases] of Object.entries(ALIASES)){
+    result[field]=aliases.map(nkey).map(k=>header.get(k)).find(i=>i!==undefined) ?? -1;
+  }
+  const missing=REQUIRED.filter(k=>result[k]<0).map(k=>LABELS[k]);
+    const wide=BENEFITS.map(name=>({name,prem:header.get(nkey('위험보험료_'+name))??-1,pnl:header.get(nkey('위험률차손익_'+name))??-1}));
+  const matches=wide.reduce((n,x)=>n+(x.prem>=0)+(x.pnl>=0),0);
+  if(matches&&matches!==12) fail('급부 분류 6개의 위험보험료·위험률차손익 열이 각각 필요합니다.');
+  result.wide=matches===12?wide:null;
+  if(!result.wide&&result.benefit<0) missing.push('급부명 또는 급부별 금액 12열');
+  if(missing.length) fail('CSV 필수 열을 찾을 수 없습니다: '+missing.join(', ')+' ('+row.length+'개 열 인식)');
+  return result;
+}
+function parseMonth(value) {
+ const m=/^([12]\d{3})\s*(?:[-./년]\s*)?(0?[1-9]|1[0-2])(?:\s*월)?(?:[-./]\d{1,2})?$/.exec(value);
+ return m ? m[1]+'-'+m[2].padStart(2,'0'):null;
+}
+function namedMonth(name) {
+ const m=/(?:^|\D)([12]\d{3})[-_.]?(0[1-9]|1[0-2])(?=\D|$)/.exec(name);
+ return m ? m[1]+'-'+m[2]:null;
+}
+function cents(value,row,name) {
+ if(!value) fail('CSV '+row+'행에 '+name+' 금액이 비어 있습니다.');
+ let s=value.replace(/^[₩]\s*/, '').replaceAll('−','-');
+ if(/^\(.*\)$/.test(s)) s='-'+s.slice(1,-1);
+ if(!/^[+-]?(?:(?:\d+)|(?:\d{1,3}(?:,\d{3})+))(?:\.\d{1,2}0*)?$/.test(s))
+   fail('CSV '+row+'행의 '+name+' 금액 형식이 올바르지 않습니다. 원 단위 숫자(소수점 두 자리까지)를 사용해 주세요.');
+ const [a,b='']=s.replaceAll(',','').split('.');
+ const out=Math.abs(Number(a))*100+Number((b+'00').slice(0,2));
+ if(!Number.isSafeInteger(out)) fail('CSV '+row+'행의 금액이 안전한 계산 범위를 벗어났습니다.');
+ return s[0]==='-'?-out:out;
+}
+function label(value, fallback='미분류') {
+ if(/[\0-\x1F\x7F\u202A-\u202E\u2066-\u2069]/.test(value)||value.length>240) fail('CSV 분류 항목에 지원하지 않는 문자 또는 길이가 있습니다.');
+ return value || fallback;
+}
+function attr(v) {return /^(?:Y|1|TRUE)$/i.test(v)?'Y':/^(?:N|0|FALSE)$/i.test(v)?'N':'미분류';}
+function add(amounts,prem,pnl) {
+ const p=amounts[0]+prem, q=amounts[1]+pnl;
+ if(!Number.isSafeInteger(p)||!Number.isSafeInteger(q)) fail('합산 금액이 안전 계산 범위를 벗어났습니다.');
+ amounts[0]=p; amounts[1]=q;
+}
+const tuple=parts=>JSON.stringify(parts);
+function addPoint(map, point, prem, pnl) {
+ let entry=map.get(point.key);
+ if(!entry){
+   if(map.size>=MAX_POINTS) fail('분석 조합 수가 너무 많습니다. 범위를 줄인 파일로 다시 시도해 주세요.');
+   entry={...point, amounts:[0,0]};map.set(point.key,entry);
+ }
+ add(entry.amounts,prem,pnl);
+}
+function parseOne(file,encoding,onBytes) {
+ return (async()=>{
+    if(!file.size) fail('비어 있는 CSV 파일이 있습니다.');
+    const decoder=new TextDecoder(encoding,{fatal:true});
+    const stream=file.stream().getReader();
+    let schema, width, month=null, bytes=0, rows=0, totalRows=0, detailRows=0, reported=0, measureMismatch=0;
+    const hint=namedMonth(file.name??'');
+    const totals=[0,0], details=[0,0], map=new Map();
+    function addScope(level,p,c,b,r,elapsed,detailCode,prem,pnl){
+      const key=tuple([level,p.g,c,p.code,p.attr,b,r,elapsed,detailCode]);
+      addPoint(map,{level,key,p,c,b,r,elapsed,detailCode},prem,pnl);
+    }
+    const scanner=makeScanner((cells,num)=>{
+      if(!schema){schema=byHeader(cells);width=cells.length;return;}
+      if(cells.length!==width) fail('CSV '+num+'행의 열 수가 헤더와 다릅니다.');
+      if(++rows>MAX_ROWS) fail('CSV 한 파일의 최대 행 수를 넘었습니다.');
+      const get=k=>schema[k]<0?'':trim(cells[schema[k]]);
+      const cellMonth=schema.month<0?hint:parseMonth(get('month'));
+      if(!cellMonth) fail('월을 확인할 수 없습니다. YYYYMM 월 열 또는 파일명(예: 202504.csv)이 필요합니다.');
+      if(hint&&cellMonth!==hint) fail('CSV 내부의 기준월과 파일명에 표시된 월이 다릅니다.');
+      if(month&&cellMonth!==month) fail('한 파일에는 한 분석월만 들어 있어야 합니다.');
+      month=cellMonth;
+      const elapsed=get('elapsed').replace(/\s+/g,'');
+      if(!DURATION.has(elapsed)) fail('CSV '+num+'행의 경과구분이 지원되는 형식이 아닙니다.');
+      const prem=cents(get('prem'),num,'위험보험료'), pnl=cents(get('pnl'),num,'위험차익');
+      const code=label(get('code'),'');
+      if(!code) fail('CSV '+num+'행에 상품코드가 없습니다.');
+      const scopedAttrs=[attr(get('simple')),attr(get('low'))].join('/');
+      const p={code, g:label(get('group')), name:label(get('name'),code), attr:''};
+      const b=label(get('benefit'));
+      const ct=label(get('contractType'),'');
+      const cc=label(get('contract'),'');
+      const r=(ct||'미상')+(cc?' '+cc:'');
+      const detail=label(get('child'),'');
+      const c=label(get('channel'));
+      if(elapsed==='전체') {totalRows++; add(totals,prem,pnl); return;}
+      if(elapsed==='2년이내') return;
+      detailRows++;add(details,prem,pnl);
+      addScope('product',p,c,'','','','',prem,pnl);
+      const ySimple=attr(get('simple')), yLow=attr(get('low'));
+      if(schema.simple>=0) addScope('simple',{...p,attr:''},c,'','','',ySimple,prem,pnl);
+      if(schema.low>=0) addScope('low',{...p,attr:''},c,'','','',yLow,prem,pnl);
+      if(schema.simple>=0||schema.low>=0) addScope('attr',{...p,attr:scopedAttrs},c,'','','','',prem,pnl);
+      const measures=schema.wide?schema.wide.map(pair=>[pair.name,
+        cents(trim(cells[pair.prem]),num,'급부별 위험보험료'),
+        cents(trim(cells[pair.pnl]),num,'급부별 위험차익'),
+      ]):[[b,prem,pnl]];
+      if(schema.wide){
+        const totalsMeasures=measures.reduce((out,m)=>{add(out,m[1],m[2]);return out;},[0,0]);
+        const inRange=(a,b)=>Math.abs(a-b)<=1;
+        if(!inRange(totalsMeasures[0],prem)||!inRange(totalsMeasures[1],pnl)) measureMismatch++;
+      }
+      for(const [bn,bp,bq] of measures){
+        if(bp===0&&bq===0)continue;
+        // Do not include overlapping broad-benefit subtotal columns or subtotal duration rows.
+        addScope('benefit',p,c,bn,'','','',bp,bq);
+        addScope('contract',p,c,bn,r,'','',bp,bq);
+        addScope('child',p,c,bn,r,'',detail,bp,bq);
+        addScope('elapsedContract',p,c,bn,r,elapsed,'',bp,bq);
+        addScope('leaf',{...p,attr:scopedAttrs},c,bn,r,'','',bp,bq);
+      }
+    });
+    function decode(chunk,opts){
+      try{return decoder.decode(chunk,opts);}catch(err){throw new Error('CSV 문자 인코딩을 읽을 수 없습니다.',{cause:err});}
+    }
+    try {
+      for(;;){
+        const {done,value}=await stream.read();
+        if(done) break;
+        bytes+=value.length;
+        scanner.feed(decode(value,{stream:true}));
+        if(bytes-reported>=512*1024){onBytes(bytes);reported=bytes;}
+      }
+      scanner.feed(decode()); scanner.finish(); onBytes(bytes);
+    } finally {await stream.cancel().catch(()=>{});stream.releaseLock();}
+    if(!schema||!month||!rows) fail('CSV 헤더 또는 데이터 행을 찾을 수 없습니다.');
+    if(!totalRows||totals[0]<=0) fail('경과구분이 전체인 행과 양수인 합계 위험보험료가 필요합니다.');
+    const balanced=detailRows>0&&details[0]===totals[0]&&details[1]===totals[1];
+    if(!balanced) fail('경과구분 1차·2차·3차 합계가 전체와 일치하지 않습니다. 월별 원본 내보내기 파일을 확인해 주세요.');
+    if(measureMismatch) fail('일부 행에서 6개 급부 금액의 합이 총액과 일치하지 않습니다. 중복·누락을 확인해 주세요.');
+    for(const [key,p] of map){
+      if(p.level==='leaf'||p.level==='product')continue;
+      const [x,y]=p.amounts;
+      if(x<=0 || totals[1]/totals[0]-y/x<0.3-1e-10) map.delete(key);
+    }
+    const hasBenefit=!!schema.wide||schema.benefit>=0, hasContract=schema.contract>=0||schema.contractType>=0;
+    return {month,rows,totalRows,detailRows,totals,balanced,measureMismatch,encoding,map,hasBenefit,hasContract};
+ })();
+}
+async function parseFallback(file,onBytes){
+ try {return await parseOne(file,'utf-8',onBytes);}
+ catch(err){
+   if(!/인코딩/.test(err.message) && !/필수 열/.test(err.message)) throw err;
+   try {return await parseOne(file,'euc-kr',onBytes);}
+   catch(retry){throw /필수 열/.test(err.message)&&/인코딩/.test(retry.message)?err:retry;}
+ }
+}
+function evaluate(series,baseline){
+ if(series.some(x=>x.prem<=0))return null;
+ const rates=series.map(x=>x.pnl/x.prem);
+ const gaps=rates.map((x,i)=>baseline[i]-x);
+ if(gaps.some(x=>x<0.3-1e-12))return null;
+ const shortage=baseline[2]*series[2].prem-series[2].pnl;
+ const impact=series[2].prem*(rates[1]-rates[2]);
+ const a=gaps[0]<gaps[1]&&gaps[1]<gaps[2]&&shortage>=1e8-1e-6;
+ const alertB=shortage>=5e7-1e-6&&impact>=5e7-1e-6;
+ return a||alertB?{a,alertB,gaps,shortage,impact}:null;
+}
+function evaluateExact(amounts, totals) {
+ if(amounts.some(x=>x[0]<=0))return null;
+ // Cheap necessary guards before integer cross-products; a margin keeps boundary points.
+ const s=amounts.map(([prem,pnl])=>({prem:prem/100,pnl:pnl/100}));
+ const bounds=totals.map(([prem,pnl])=>pnl/prem);
+ const approxGap=s.map((r,i)=>bounds[i]-r.pnl/r.prem);
+ const roughShort=bounds[2]*s[2].prem-s[2].pnl;
+ if(roughShort<5e7-1||approxGap.some(g=>g<0.3-1e-10))return null;
+ const p=amounts.map(x=>BigInt(x[0])), q=amounts.map(x=>BigInt(x[1]));
+ const tp=totals.map(x=>BigInt(x[0])), tq=totals.map(x=>BigInt(x[1]));
+ const shortN=p.map((n,i)=>tq[i]*n-q[i]*tp[i]);
+ const gapD=p.map((n,i)=>n*tp[i]);
+ if(shortN.some((n,i)=>n*10n<gapD[i]*3n))return null;
+ const isIncreasing=(a,b)=>shortN[a]*gapD[b]<shortN[b]*gapD[a];
+ const impactN=q[1]*p[2]-q[2]*p[1];
+ const a=isIncreasing(0,1)&&isIncreasing(1,2)&&shortN[2]>=10_000_000_000n*tp[2];
+ const alertB=shortN[2]>=5_000_000_000n*tp[2]&&impactN>=5_000_000_000n*p[1];
+ return a||alertB?{a,alertB,gaps:shortN.map((n,i)=>Number(n)/Number(gapD[i])),shortage:Number(shortN[2])/Number(tp[2])/100,impact:Number(impactN)/Number(p[1])/100}:null;
+}
+function combine(reports){
+ reports.sort((a,b)=>a.month.localeCompare(b.month));
+ const months=reports.map(x=>x.month);
+ if(months.some((m,i)=>m!==MONTHS_EXPECTED[i])) fail('2025년 4월·5월·6월 CSV를 월별로 한 개씩 선택해 주세요.');
+ const totals=reports.map((x,i)=>({month:months[i],prem:x.totals[0]/100,pnl:x.totals[1]/100}));
+ const baseline=totals.map(t=>t.pnl/t.prem);
+ const ids=new Map(), products=[], groups=new Set(), channels=new Set(), benefits=new Set(), riders=new Set(), attrs=new Set(), segments=[];
+ const getProduct=p=>{
+   const key=tuple([p.g,p.code]); let id=ids.get(key);
+   if(id===undefined){id=products.length+1;ids.set(key,id);products.push({...p,id});}
+   return {...p,id};
+ };
+ function seriesFor(key){
+  return reports.map((x,i)=>{const [p,q]=x.map.get(key)?.amounts??[0,0];return {month:months[i],prem:p/100,pnl:q/100};});
+ }
+ const leafKeys=new Map();
+ for (const {map} of reports) for(const [key,p] of map) if(p.level==='leaf') leafKeys.set(key,p);
+ for(const [key,s] of leafKeys){
+   const p=getProduct(s.p); const {c,b,r}=s; groups.add(p.g);channels.add(c);benefits.add(b);riders.add(r);attrs.add(p.attr);
+   segments.push({key,p,c,b,r,series:seriesFor(key)});
+ }
+ const found=new Map();
+ const fields=['product','benefit','contract','child','elapsedContract','simple','low','attr'];
+ const prefer=(a,b)=>a.shortage>b.shortage || (a.shortage===b.shortage&&(fields.indexOf(a.point.level)<fields.indexOf(b.point.level)||(a.point.level===b.point.level&&a.key<b.key)));
+ for(const s of reports[2].map.values()){
+   if(s.level==='leaf'||!s.c)continue;
+   if(/^elapsed/.test(s.level)&&reports.some(x=>!x.balanced)) continue;
+   const product=reports[2].map.get(tuple(['product',s.p.g,s.c,s.p.code,'','','','','']));
+   if(!(product?.amounts[0]>0))continue;
+   const amounts=reports.map(x=>x.map.get(s.key)?.amounts??[0,0]);
+   const verdict=evaluateExact(amounts,reports.map(x=>x.totals));
+   if(!verdict)continue;
+   const series=seriesFor(s.key);
+   const p=getProduct(s.p), scope=tuple([p.g,s.c,p.code]);
+   const e={key:s.key,p,c:s.c,b:s.b,r:s.r,series,...verdict,point:{level:s.level,label:LABELS_POINT[s.level],elapsed:s.elapsed,detailCode:s.detailCode}};
+   const result=found.get(scope)??{rep:e,aEvidence:null,bEvidence:null};
+   if(prefer(e,result.rep))result.rep=e;
+   if(e.a&&(!result.aEvidence||prefer(e,result.aEvidence)))result.aEvidence=e;
+   if(e.alertB&&(!result.bEvidence||prefer(e,result.bEvidence)))result.bEvidence=e;
+   found.set(scope,result);
+ }
+ const candidates=[...found.values()].map(x=>({...x.rep,a:!!x.aEvidence,alertB:!!x.bEvidence,aEvidence:x.aEvidence,bEvidence:x.bEvidence}));
+ candidates.sort((a,b)=>b.shortage-a.shortage||a.key.localeCompare(b.key));
+ for(const p of products) p.attr=''; // Product identity remains stable where attributes vary.
+ const sorted=s=>[...s].sort((a,b)=>a.localeCompare(b,'ko',{numeric:true}));
+ return {months,groups:sorted(groups),channels:sorted(channels),attrs:sorted(attrs),products,benefits:sorted(benefits),riders:sorted(riders),segments,baseline,totals,candidates,meta:{
+   rows:reports.reduce((n,x)=>n+x.rows,0),
+   months:reports.map(x=>({month:x.month,rows:x.rows,totalRows:x.totalRows,detailRows:x.detailRows,encoding:x.encoding,balanced:x.balanced,measureMismatch:x.measureMismatch})),
+   balanced:reports.every(x=>x.balanced), measureMismatch:reports.reduce((n,x)=>n+x.measureMismatch,0), fullDepth:reports.every(x=>x.hasBenefit&&x.hasContract),
+   rule:'3개월 30%p 열위 + A(지속 악화) 또는 B(최근 급격 악화). 상품군·채널·상품코드별 중복 제거.',
+   ruleCoverage:'상품·급부·담보·세부급부·경과·고지/저해지 분석점에서 계산합니다. 실제 파일과 기존 사이트 결과의 일치는 아직 대사하지 않았습니다.',
+   baselineMethod:'월 기준에는 경과구분 전체를, 상세 계산에는 중복 없는 1차·2차·3차만 사용합니다.'
+ }};
+}
+async function importFiles(files,onProgress=()=>{}){
+ if(!Array.isArray(files)||files.length!==3) fail('2025년 4월·5월·6월 CSV 세 개를 선택해 주세요.');
+ const total=files.reduce((n,x)=>n+x.size,0);
+ if(total>MAX_BYTES) fail('선택 파일의 합계가 768MiB를 넘습니다.');
+ let done=0;
+ const reports=[];
+ for(const file of files){
+   const report=await parseFallback(file,bytes=>onProgress({phase:'read',done:done+bytes,total}));
+   done+=file.size;reports.push(report);
+ }
+ onProgress({phase:'calculate',done,total});
+ return combine(reports);
+}
+const api={makeScanner,byHeader,cents,parseMonth,importFiles,evaluate,evaluateExact};
+if(typeof module==='object'&&module.exports)module.exports=api;
+else root.CsvCore=api;
+if(typeof WorkerGlobalScope!=='undefined'&&root instanceof WorkerGlobalScope){
+ root.addEventListener('message',async event=>{
+   try{
+     const result=await importFiles(event.data.files,d=>root.postMessage({type:'progress',...d}));
+     root.postMessage({type:'result',data:result});
+   }catch(error){root.postMessage({type:'error',message:error.message||'CSV 계산 중 오류가 발생했습니다.'});}
+ });
+}
+})(globalThis);
+</script>
 <script>
 'use strict';
-const MONTHS=['2027-01','2027-02','2027-03'];
-const GROUPS=['가상 건강군','가상 생활군','가상 보장군'];
-const CHANNELS=['가상 채널 A','가상 채널 B','가상 채널 C'];
+let MONTHS=['2027-01','2027-02','2027-03'];
+let GROUPS=['가상 건강군','가상 생활군','가상 보장군'];
+let CHANNELS=['가상 채널 A','가상 채널 B','가상 채널 C'];
 const ATTRS=['Y/Y','Y/N','N/Y','N/N'];
-const PRODUCTS=GROUPS.flatMap((g,gi)=>['α','β','γ','δ'].map((p,pi)=>({id:(gi*4+pi+1),g,name:'데모 상품 '+String(gi*4+pi+1).padStart(2,'0')+' '+p,attr:ATTRS[pi]})));
-const BENEFITS=['가상 입원급부','가상 수술급부','가상 회복급부'];
+let PRODUCTS=GROUPS.flatMap((g,gi)=>['α','β','γ','δ'].map((p,pi)=>({id:(gi*4+pi+1),g,name:'데모 상품 '+String(gi*4+pi+1).padStart(2,'0')+' '+p,attr:ATTRS[pi]})));
+let BENEFITS=['가상 입원급부','가상 수술급부','가상 회복급부'];
 const RIDERS=['가상 주계약','가상 특약 A'];
-const SEGMENTS=PRODUCTS.flatMap(p=>CHANNELS.flatMap((c,ci)=>BENEFITS.flatMap((b,bi)=>RIDERS.map((r,ri)=>{
+let SEGMENTS=PRODUCTS.flatMap(p=>CHANNELS.flatMap((c,ci)=>BENEFITS.flatMap((b,bi)=>RIDERS.map((r,ri)=>{
  const k=p.id*67+ci*13+bi*5+ri; 
  const tag=(p.id===1&&ci===0&&bi===1&&ri===0)?'B':(p.id===5&&ci===1&&bi===0&&ri===1)?'A':(p.id===9&&ci===0&&bi===2&&ri===1)?'AB':(p.id===2&&ci===2&&bi===0&&ri===0)?'A':(p.id===6&&ci===0&&bi===1&&ri===0)?'B':(p.id===10&&ci===1&&bi===2&&ri===0)?'AB':'';
  const series=MONTHS.map((month,mi)=>{
@@ -59,27 +406,39 @@ const SEGMENTS=PRODUCTS.flatMap(p=>CHANNELS.flatMap((c,ci)=>BENEFITS.flatMap((b,
 }))));
 const fold=(segments,mi)=>segments.reduce((a,s)=>({prem:a.prem+s.series[mi].prem,pnl:a.pnl+s.series[mi].pnl}),{prem:0,pnl:0});
 const ratio=x=>x.prem>0?x.pnl/x.prem:null;
-const BASE=MONTHS.map((_,mi)=>ratio(fold(SEGMENTS,mi)));
-const short=(x,mi)=>x.prem*BASE[mi]-x.pnl;
+let BASE=MONTHS.map((_,mi)=>ratio(fold(SEGMENTS,mi)));
+const short=(x,mi)=>BASE[mi]==null?null:x.prem*BASE[mi]-x.pnl;
 function evaluate(s){
-  const gaps=s.series.map((x,i)=>BASE[i]-ratio(x));
+  const gaps=s.series.map((x,i)=>BASE[i]==null||ratio(x)==null?null:BASE[i]-ratio(x));
   const shortage=short(s.series[2],2), impact=(ratio(s.series[1])-ratio(s.series[2]))*s.series[2].prem;
   const common=s.series.every((x,i)=>x.prem>0&&gaps[i]>=.30);
   const a=common&&gaps[0]<gaps[1]&&gaps[1]<gaps[2]&&shortage>=1e8;
   const b=common&&shortage>=5e7&&impact>=5e7;
   return {a,alertB:b,gaps,shortage,impact};
 }
-const CANDIDATES=SEGMENTS.map(s=>({...s,...evaluate(s)})).filter(s=>s.a||s.alertB).sort((x,y)=>y.shortage-x.shortage);
+function deriveCandidates(){
+ const rows=[];
+ for(const segment of SEGMENTS){
+  const result=evaluate(segment);
+  if(result.a||result.alertB)rows.push({...segment,...result});
+ }
+ return rows.sort((x,y)=>y.shortage-x.shortage);
+}
+let CANDIDATES=deriveCandidates();
+let candidateKeys=new Set(CANDIDATES.map(s=>s.key));
+const SYNTHETIC={MONTHS,GROUPS,CHANNELS,PRODUCTS,BENEFITS,SEGMENTS,BASE,CANDIDATES};
+let imported=false, activeWorker=null, importTicket=0, importedMeta=null, candidateLookup=new Map();
 const STEPS=['상품군 × 채널','간편고지 × 무·저해지','상품 × 급부','주계약·특약','경과·월별 변화','정량 분석 종합'];
-const initial=()=>({stage:-1,mi:2,g:'',c:'',attr:'',p:0,b:'',r:'',theme:''});
+const initial=()=>({stage:-1,mi:2,g:'',c:'',attr:'',p:0,b:'',r:'',theme:'',evidence:''});
 let state=initial();
 const $=id=>document.getElementById(id);
-const money=x=>new Intl.NumberFormat('ko-KR',{maximumFractionDigits:1,minimumFractionDigits:1}).format(x/1e6);
+const numberFormat=new Intl.NumberFormat('ko-KR',{maximumFractionDigits:1,minimumFractionDigits:1});
+const money=x=>x==null?'—':numberFormat.format(x/1e6);
 const pct=x=>x==null?'—':(x*100).toFixed(1)+'%';
 const pp=x=>x==null?'—':(x*100).toFixed(1)+'%p';
 const pos=x=>x>0?'bad':'good';
 const color=x=>x<0?'bad':'good';
-const won=x=>money(x)+'백만 원';
+const won=x=>x==null?'—':money(x)+'백만 원';
 const esc=x=>String(x).replace(/[&<>"']/g,z=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[z]));
 const table=(headers,rows)=>rows.length?'<div class="scroll"><table><thead><tr>'+headers.map(h=>'<th scope="col">'+h+'</th>').join('')+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+r.map((cell,i)=>'<td class="'+(String(cell).includes('data-num')?'num':'')+'">'+cell+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>':'<p class="empty">이 범위에 표시할 항목이 없습니다.</p>';
 const n=(txt,cls='')=>'<span data-num class="'+cls+'">'+txt+'</span>';
@@ -88,11 +447,40 @@ const badge=s=>(s.a?'<span class="badge">A · 지속 악화</span>':'')+(s.alert
 function matching({g=state.g,c=state.c,attr=state.attr,p=state.p,b=state.b,r=state.r}={}){
  return SEGMENTS.filter(s=>(!g||s.p.g===g)&&(!c||s.c===c)&&(!attr||s.p.attr===attr)&&(!p||s.p.id===p)&&(!b||s.b===b)&&(!r||s.r===r));
 }
-function counts(segments){
- const keys=new Set(segments.map(s=>s.key)); return CANDIDATES.filter(s=>keys.has(s.key)).length;
+function attrLabel(a){const [simple,low]=a.split('/');return '간편고지 '+(simple||'미분류')+' · 무저해지 '+(low||'미분류');}
+function evidenceKey(id,channel){return JSON.stringify([id,channel]);}
+function relevantCandidates(segments){
+ if(!imported)return segments.filter(s=>candidateKeys.has(s.key));
+ const result=new Set();
+ for(const seg of segments){
+  for(const item of candidateLookup.get(evidenceKey(seg.p.id,seg.c))??[]){
+   if((!item.p.attr||item.p.attr===seg.p.attr)&&(!item.b||item.b===seg.b)&&(!item.r||item.r===seg.r))result.add(item);
+  }
+ }
+ return [...result];
 }
+function counts(segments){return relevantCandidates(segments).length;}
+function checkedEvidence(){return imported&&state.evidence?CANDIDATES.find(s=>s.key===state.evidence):null;}
+function pointLabel(candidate){return candidate.point?.label||[candidate.b,candidate.r].filter(Boolean).join(' · ')||'상품 전체';}
+function financeScope(segments,mi){return checkedEvidence()?.series[mi]??fold(segments,mi);}
+
 function options(label,field,items,current,any){
  return '<label class="'+(['mi','theme'].includes(field)?'pill':'')+'">'+label+'<select data-field="'+field+'">'+(any?'<option value="">'+any+'</option>':'')+items.map(([v,l])=>'<option value="'+esc(v)+'"'+(v===current?' selected':'')+'>'+esc(l)+'</option>').join('')+'</select></label>';
+}
+function filterProducts(){
+ if(!state.attr&&!state.c)return PRODUCTS.filter(p=>!state.g||p.g===state.g);
+ const ids=new Set(matching({p:0,b:'',r:''}).map(s=>s.p.id));
+ return PRODUCTS.filter(p=>ids.has(p.id));
+}
+function candidateAttr(candidate){
+ if(!candidate)return '';
+ if(candidate.p.attr)return candidate.p.attr;
+ const options=new Set();
+ for(const s of matching({g:candidate.p.g,c:candidate.c,attr:'',p:candidate.p.id,b:candidate.b,r:candidate.r})){
+  if(s.p.attr)options.add(s.p.attr);
+  if(options.size>1)return '';
+ }
+ return options.values().next().value??'';
 }
 function scopes(segments,key){
  const map=new Map();
@@ -111,97 +499,193 @@ function section(title,describe,inner){return '<div class="sect"><div><h2>'+titl
 const SUM_HEADERS=['손익률','위험보험료','위험차익','기준 대비 부족액','최신 경보 상세키'];
 function renderAlerts(){
  const q=($('search').value||'').trim().toLowerCase();
- const rows=CANDIDATES.map((s,i)=>({s,rank:i+1})).filter(({s})=>[s.p.name,s.c,s.p.g,s.b,s.r].join(' ').toLowerCase().includes(q));
- $('candidateCount').textContent='표시 '+rows.length+'개 / 전체 '+CANDIDATES.length+'개';
+ const matches=CANDIDATES.map((s,i)=>({s,rank:i+1})).filter(({s})=>[s.p.name,s.p.code??'',s.c,s.p.g,s.b,s.r].join(' ').toLowerCase().includes(q));
+ const rows=matches.slice(0,200);
+ $('candidateCount').textContent='표시 '+rows.length+'개 / 검색 '+matches.length+'개 / 전체 '+CANDIDATES.length+'개';
  $('alerts').innerHTML=table(['순위','상품군·채널 / 상품','선정 유형','대표 부족액<small>백만원</small>','<span aria-label="분석 선택"></span>'],rows.map(({s,rank})=>[
    rank,'<small>'+esc(s.p.g+' × '+s.c)+'</small><strong>'+esc(s.p.name)+'</strong>',badge(s),
-   '<span data-num class="stacked"><b>'+money(s.shortage)+'</b><small>'+esc(s.b+' · '+s.r)+'</small></span>',
+   '<span data-num class="stacked"><b>'+money(s.shortage)+'</b><small>'+esc(pointLabel(s))+'</small></span>',
    btn('분석 →','alert',s.key)]));
 }
 function paintPath(){
  const p=PRODUCTS.find(p=>p.id===state.p);
  const labels=['상품군 · 채널','간편고지 · 무저해지','상품 · 급부','주계약 · 특약'];
- const values=[[state.g,state.c].filter(Boolean).join(' × ')||'구간 선택',state.attr?'간편고지 '+state.attr[0]+' · 무저해지 '+state.attr[2]:'전체 속성',p?.name||'상품 선택',state.r||'코드 선택'];
+ const values=[[state.g,state.c].filter(Boolean).join(' × ')||'구간 선택',state.attr?attrLabel(state.attr):'전체 속성',p?.name||'상품 선택',state.r||'코드 선택'];
  $('path').innerHTML=labels.map((label,i)=>'<span class="crumb"><small>'+label+'</small><b>'+esc(values[i])+'</b></span>').join('<span class="sep" aria-hidden="true">›</span>')+'<span class="scope-detail">'+rangeTitle()+'</span>';
 }
 function render(){
  const isAlert=state.stage<0;
  $('alertPanel').hidden=!isAlert;$('path').hidden=isAlert;$('view').hidden=isAlert;
  const cnt=CANDIDATES.length, a=CANDIDATES.filter(x=>x.a).length,b=CANDIDATES.filter(x=>x.alertB).length, both=CANDIDATES.filter(x=>x.a&&x.alertB).length;
- const example=CANDIDATES.find(x=>x.alertB&&!x.a);
+ const example=!imported&&CANDIDATES.find(x=>x.alertB&&!x.a);
  $('kpis').innerHTML='<div class="ct"><strong>'+cnt+'</strong><span><b>개 후보</b><small>중복 제외</small></span></div><div class="split"><span>A · 지속 악화 <b>'+a+'개</b></span><span>B · 최근 급격 악화 <b>'+b+'개</b></span><span class="both">두 조건 모두 '+both+'개</span></div>'+(example?btn('가상 사례 보기','example',example.key,'link case'):'');
  renderAlerts();
  $('tabs').innerHTML=['경보 후보',...STEPS.map((s,i)=>(i+1)+' · '+s)].map((label,j)=>'<button type="button" data-action="step" data-value="'+(j-1)+'" class="'+(state.stage===j-1?'active':'')+'" '+(state.stage===j-1?'aria-current="page"':'')+'>'+esc(label)+'</button>').join('');
  const filter=options('분석월','mi',MONTHS.map((m,i)=>[i,m.replace('-', '년 ')+'월']),state.mi)+options('배경색','theme',[['','테마 기본'],['white','흰색'],['mist','옅은 청회색']],state.theme);
- const scopes=isAlert?'':'<div class="tiny-controls">'+options('상품군','g',GROUPS.map(g=>[g,g]),state.g,'전체 상품군')+options('채널','c',CHANNELS.map(c=>[c,c]),state.c,'전체 채널')+options('상품','p',PRODUCTS.filter(p=>(!state.g||p.g===state.g)&&(!state.attr||p.attr===state.attr)).map(p=>[p.id,p.name]),state.p,'전체 상품')+'</div>';
- $('filters').innerHTML=filter+'<span class="pill">발표용</span><span class="source-note">합성 데이터 · 실제 업무자료 아님</span>'+scopes;
- paintPath();renderStage();
+ const scopes=isAlert?'':'<div class="tiny-controls">'+options('상품군','g',GROUPS.map(g=>[g,g]),state.g,'전체 상품군')+options('채널','c',CHANNELS.map(c=>[c,c]),state.c,'전체 채널')+options('상품','p',filterProducts().map(p=>[p.id,p.name]),state.p,'전체 상품')+'</div>';
+ $('filters').innerHTML=filter+'<span class="pill">발표용</span><span class="source-note">'+(imported?'로컬 CSV · 이 탭에서만 표시':'합성 데이터 · 실제 업무자료 아님')+'</span>'+scopes;
+ $('dataMode').textContent=imported?'PC에서 불러온 데이터':'합성 데이터';
+ $('dataNote').textContent=imported?'브라우저 내 분석 · 서버 전송 없음':'합성 포트폴리오 · 발표 화면';
+ $('dataFooter').textContent=imported?'선택한 CSV를 현재 탭에서만 처리합니다. 새로고침하거나 로컬 데이터를 지우면 이 화면에 남지 않습니다.':'모든 상품·채널·수치는 합성 데이터입니다. 실제 보험사, 상품, 보험 계약 또는 경영실적과 무관합니다.';
+ $('alertNote').textContent='대표 부족액은 표시된 분석 지점의 값입니다. 상품 전체 부족액과 다를 수 있습니다. 경보는 '+MONTHS[2]+' 기준(4·5·6월 비교)입니다. 목록은 검색 결과 중 최대 200개를 표시합니다.';
+ if(!imported) $('alertNote').textContent='대표 부족액은 표시된 상세 조합의 값입니다. 상품 전체 부족액과 다를 수 있습니다. 경보는 '+MONTHS[2]+' 기준입니다. 목록은 검색 결과 중 최대 200개를 표시합니다.';
+ if(imported&&importedMeta?.reconciled!==true) $('alertNote').textContent+=' 경보 수와 순위는 원본 대시보드와 완전 대사되지 않았습니다.';
+ $('dataMode').className=imported?'tag local':'tag';
+ if(!isAlert){paintPath();renderStage();}else{$('path').textContent='';$('view').textContent='';}
+ $('clearCsv').hidden=!imported&&!activeWorker;
  $('bottom').innerHTML='<span>'+(isAlert?'시작 · 경보 후보':'현재 '+(state.stage+1)+'단계 · '+STEPS[state.stage])+'</span><div>'+(isAlert?'':btn('이전', 'step',state.stage-1)+' ')+(state.stage<5?btn((state.stage+2)+'단계 · '+STEPS[state.stage+1],'step',state.stage+1)+' ':'')+btn('초기화','reset','')+'</div>';
  if(document.body)document.body.dataset.theme=state.theme;
 }
 function renderStage(){
  let html='';
  if(state.stage===0){
-   const matrix='<div class="scroll"><table class="matrix"><thead><tr><th scope="col">상품군 / 채널</th>'+CHANNELS.map(c=>'<th scope="col">'+esc(c)+'</th>').join('')+'</tr></thead><tbody>'+GROUPS.map(g=>'<tr><th scope="row">'+esc(g)+'</th>'+CHANNELS.map(c=>{
-   const seg=matching({g,c,attr:'',p:0,b:'',r:''}), count=counts(seg), x=fold(seg,state.mi), k=g+'|'+c;
+   const matrixGroups=new Map(scopes(SEGMENTS,s=>JSON.stringify([s.p.g,s.c])));
+   const displayedGroups=state.g?[state.g]:GROUPS.slice(0,40), displayedChannels=state.c?[state.c]:CHANNELS.slice(0,40);
+   const truncated=(!state.g&&GROUPS.length>40)||(!state.c&&CHANNELS.length>40);
+   const matrix='<div class="scroll"><table class="matrix"><thead><tr><th scope="col">상품군 / 채널</th>'+displayedChannels.map(c=>'<th scope="col">'+esc(c)+'</th>').join('')+'</tr></thead><tbody>'+displayedGroups.map(g=>'<tr><th scope="row">'+esc(g)+'</th>'+displayedChannels.map(c=>{
+   const seg=matrixGroups.get(JSON.stringify([g,c]))??[], count=counts(seg), x=fold(seg,state.mi), k=JSON.stringify([g,c]);
    return '<td><button type="button" class="cell '+(count?'hot':'')+'" data-action="pair" data-value="'+esc(k)+'" aria-label="'+esc(g+' × '+c+' · 경보 '+count+'개')+'"><span class="count">'+count+'</span> 개<small>'+pct(ratio(x))+'</small></button></td>';
    }).join('')+'</tr>').join('')+'</tbody></table></div>';
-   html=section('분석 1단계 · 상품군 × 채널','큰 숫자: 선정 후보 수　　작은 숫자: 구간 손익률',matrix);
+   html=section('분석 1단계 · 상품군 × 채널','큰 숫자: 선정 후보 수　　작은 숫자: 구간 손익률',(truncated?'<p class="note">행과 열은 각각 최대 40개를 표시합니다. 상단 필터에서 특정 구간을 선택할 수 있습니다.</p>':'')+matrix);
  }else if(state.stage===1){
-   const card=a=>{
+   const card=(a,showLabel=false)=>{
     const seg=matching({attr:a,p:0,b:'',r:''}), x=fold(seg,state.mi), gap=short(x,state.mi);
-    return '<button type="button" data-action="attr" data-value="'+a+'" class="tile '+(a===state.attr?'chosen ':'')+(gap>0?'hot':'')+'" aria-pressed="'+(a===state.attr)+'"><span class="big">'+pct(ratio(x))+'</span><small>위험률차손익률</small><p>기준 대비 부족액 <strong>'+won(gap)+'</strong></p><p>위험보험료 '+won(x.prem)+' · 위험차익 '+won(x.pnl)+'</p><p>선정 후보 <b>'+counts(seg)+'개</b></p></button>';
+    return '<button type="button" data-action="attr" data-value="'+esc(a)+'" class="tile '+(a===state.attr?'chosen ':'')+(gap>0?'hot':'')+'" aria-pressed="'+(a===state.attr)+'">'+(showLabel?'<p><b>'+esc(attrLabel(a))+'</b></p>':'')+'<span class="big">'+pct(ratio(x))+'</span><small>위험률차손익률</small><p>기준 대비 부족액 <strong>'+won(gap)+'</strong></p><p>위험보험료 '+won(x.prem)+' · 위험차익 '+won(x.pnl)+'</p><p>선정 후보 <b>'+counts(seg)+'개</b></p></button>';
    };
    const matrix='<div class="scroll"><table class="attribute"><thead><tr><th scope="col">간편고지 / 무저해지</th><th scope="col">무저해지 N</th><th scope="col">무저해지 Y</th></tr></thead><tbody><tr><th scope="row">간편고지 N</th><td>'+card('N/N')+'</td><td>'+card('N/Y')+'</td></tr><tr><th scope="row">간편고지 Y</th><td>'+card('Y/N')+'</td><td>'+card('Y/Y')+'</td></tr></tbody></table></div>';
-   html=section('분석 2단계 · 간편고지 × 무·저해지','선택 범위의 속성별 손익을 비교합니다.',btn('전체 속성으로 상품 보기','allattrs','')+'<p class="note">'+esc([state.g,state.c].filter(Boolean).join(' × ')||'전체 범위')+' · '+MONTHS[state.mi]+' · 동월 전체 손익률 '+pct(BASE[state.mi])+'</p>'+matrix);
+   const other=[...new Set(matching({attr:'',p:0,b:'',r:''}).map(v=>v.p.attr))].filter(a=>a&&!ATTRS.includes(a));
+   const extra=other.length?'<h3 style="margin-top:10px">미분류 속성</h3><div class="grid">'+other.map(a=>card(a,true)).join('')+'</div>':'';
+   html=section('분석 2단계 · 간편고지 × 무·저해지','선택 범위의 속성별 손익을 비교합니다.',btn('전체 속성으로 상품 보기','allattrs','')+'<p class="note">'+esc([state.g,state.c].filter(Boolean).join(' × ')||'전체 범위')+' · '+MONTHS[state.mi]+' · 동월 전체 손익률 '+pct(BASE[state.mi])+'</p>'+matrix+extra);
+
  }else if(state.stage===2){
    if(!state.g||!state.c){
     html=section('분석 3단계 · 상품 × 급부','상위 합계와 별개로 상품별 급부에서 차이가 나는지 비교합니다.','<p class="empty" style="text-align:center">먼저 상품군과 채널을 선택해 주세요.</p>');
    }else{
-    const groups=scopes(matching({b:'',r:''}),x=>x.p.id);
-    const matrix='<div class="scroll"><table class="matrix"><thead><tr><th scope="col">상품 / 급부</th>'+BENEFITS.map(b=>'<th scope="col">'+esc(b)+'</th>').join('')+'</tr></thead><tbody>'+groups.map(([id,seg])=>{
+    const allGroups=scopes(matching({b:'',r:''}),x=>x.p.id), groups=allGroups.slice(0,150), visibleBenefits=BENEFITS.slice(0,35);
+    const matrix='<div class="scroll"><table class="matrix"><thead><tr><th scope="col">상품 / 급부</th>'+visibleBenefits.map(b=>'<th scope="col">'+esc(b)+'</th>').join('')+'</tr></thead><tbody>'+groups.map(([id,seg])=>{
        const all=fold(seg,state.mi);
-       return '<tr><th scope="row"><strong>'+esc(seg[0].p.name)+'</strong><small>'+pct(ratio(all))+' · '+won(short(all,state.mi))+'</small></th>'+BENEFITS.map(b=>{
+       return '<tr><th scope="row"><strong>'+esc(seg[0].p.name)+'</strong><small>'+pct(ratio(all))+' · '+won(short(all,state.mi))+'</small></th>'+visibleBenefits.map(b=>{
           const matchingBenefit=seg.filter(x=>x.b===b), x=fold(matchingBenefit,state.mi), gap=short(x,state.mi);
-          return '<td><button type="button" class="cell '+(gap>0?'hot':'cool')+(state.p===Number(id)&&state.b===b?' selected':'')+'" data-action="benefit" data-value="'+esc(id+'|'+b)+'" aria-label="'+esc(seg[0].p.name+' · '+b)+'"><span class="count">'+money(gap)+'</span><small>'+pct(ratio(x))+'</small></button></td>';
+          return '<td><button type="button" class="cell '+(gap>0?'hot':'cool')+(state.p===Number(id)&&state.b===b?' selected':'')+'" data-action="benefit" data-value="'+esc(JSON.stringify([id,b]))+'" aria-label="'+esc(seg[0].p.name+' · '+b)+'"><span class="count">'+money(gap)+'</span><small>'+pct(ratio(x))+'</small></button></td>';
        }).join('')+'</tr>';
     }).join('')+'</tbody></table></div>';
-    html=section('분석 3단계 · 상품 × 급부','기준 대비 부족액(백만원) · 붉은색: 부족 · 녹색: 기준 상회',groups.length?matrix:'<p class="empty">선택 범위에 상품이 없습니다.</p>');
+    html=section('분석 3단계 · 상품 × 급부','기준 대비 부족액(백만원) · 붉은색: 부족 · 녹색: 기준 상회',groups.length?((allGroups.length>150||BENEFITS.length>35)?'<p class="note">최대 150개 상품과 35개 급부를 표시합니다. 상품을 선택해 범위를 좁힐 수 있습니다.</p>':'')+matrix:'<p class="empty">선택 범위에 상품이 없습니다.</p>');
    }
  }else if(state.stage===3){
    const rows=scopes(matching({r:''}),s=>s.r).map(([k,s])=>[esc(k),...summaryRow(s),btn('월별 보기','rider',k)]);
    html=section('분석 4단계 · 주계약 × 특약','같은 상품·급부에서 손익 악화가 어느 담보에 나타나는지 확인합니다.',table(['담보',...SUM_HEADERS,'다음 단계'],rows));
  }else if(state.stage===4){
-   const s=matching(), series=MONTHS.map((m,i)=>fold(s,i));
+   const s=matching(), evidence=checkedEvidence(), series=MONTHS.map((m,i)=>financeScope(s,i));
    const chart='<div class="chart" aria-label="기준 대비 열위폭 차트">'+series.map((x,i)=>{
-    const rr=ratio(x), gap=rr==null?null:BASE[i]-rr;
+    const rr=ratio(x), gap=rr==null||BASE[i]==null?null:BASE[i]-rr;
     const w=Math.min(100,Math.max(0,(gap??0)*60));
     return '<div class="chart-row"><span>'+MONTHS[i]+'</span><div class="bar-track" aria-hidden="true"><div class="bar" style="width:'+w+'%"></div></div><span class="score">'+pp(gap)+'</span></div>';
    }).join('')+'</div>';
    const rows=series.map((x,i)=>[MONTHS[i],n(pct(ratio(x))),n(pct(BASE[i])),n(won(x.prem)),n(won(x.pnl)),n(won(short(x,i)),pos(short(x,i)))]);
-   html=section('분석 5단계 · 월별 추이','선택 범위의 손익률과 각 월 전체 기준을 함께 비교합니다.',chart+table(['기준월','선택 범위 손익률','동월 전체 손익률','위험보험료','위험차익','기준 대비 부족액'],rows)+'<p class="note">'+btn('정량 분석 종합','step',5)+'</p>');
+   html=section('분석 5단계 · 월별 추이','선택 범위의 손익률과 각 월 전체 기준을 함께 비교합니다.',(evidence?'<p class="note">선택한 경보 지점: '+esc(pointLabel(evidence))+'</p>':'')+chart+table(['기준월','선택 범위 손익률','동월 전체 손익률','위험보험료','위험차익','기준 대비 부족액'],rows)+'<p class="note">'+btn('정량 분석 종합','step',5)+'</p>');
  }else{
-   const s=matching(), x=fold(s,state.mi), gap=short(x,state.mi), rr=ratio(x), candidates=CANDIDATES.filter(a=>s.some(v=>v.key===a.key));
+   const s=matching(), evidence=checkedEvidence(), x=financeScope(s,state.mi), gap=short(x,state.mi), rr=ratio(x), candidates=imported?relevantCandidates(s).slice(0,100):CANDIDATES.filter(a=>candidateKeys.has(a.key)&&s.some(v=>v.key===a.key)).slice(0,100);
    const parts=scopes(s,v=>v.p.name+' · '+v.b+' · '+v.r).map(([label,v])=>[label,short(fold(v,state.mi),state.mi)]).sort((a,b)=>b[1]-a[1]).slice(0,3);
-   const cards=[['위험률차손익률',pct(rr)],['동월 기준 대비 열위',pp(rr==null?null:BASE[state.mi]-rr)],['동월 기준 대비 부족액',won(gap)]].map(([a,b])=>'<div class="card"><p class="kpi-label">'+a+'</p><p class="kpi-value">'+b+'</p></div>').join('');
-   const hit=candidates.length?'<ul class="list">'+candidates.map(a=>'<li>'+esc(a.p.name+' · '+a.c+' · '+a.b+' · '+a.r)+' '+badge(a)+'</li>').join('')+'</ul>':'<p class="note">이 범위에서 최신월의 A/B 조건을 충족한 상세 조합은 없습니다.</p>';
+   const cards=[['위험률차손익률',pct(rr)],['동월 기준 대비 열위',pp(rr==null||BASE[state.mi]==null?null:BASE[state.mi]-rr)],['동월 기준 대비 부족액',won(gap)]].map(([a,b])=>'<div class="card"><p class="kpi-label">'+a+'</p><p class="kpi-value">'+b+'</p></div>').join('');
+   const hit=candidates.length?'<ul class="list">'+candidates.map(a=>'<li>'+esc(a.p.name+' · '+a.c+' · '+pointLabel(a))+' '+badge(a)+'</li>').join('')+'</ul>':'<p class="note">이 범위에서 최신월의 A/B 조건을 충족한 상세 조합은 없습니다.</p>';
    const decomp=parts.length?'<ol class="list">'+parts.map(([label,delta])=>'<li>'+esc(label)+' · '+won(delta)+'</li>').join('')+'</ol>':'<p class="note">선택 범위에 값이 없습니다.</p>';
-   html=section('분석 6단계 · 정량 분석 종합','규칙에 따른 점검 순서이며, 원인이나 통계적 유의성을 입증하지 않습니다.','<div class="grid">'+cards+'</div><h3 style="margin-top:14px">해당 범위의 최신 경보</h3>'+hit+'<h3 style="margin-top:14px">부족액 상위 기여 조합</h3>'+decomp);
+   html=section('분석 6단계 · 정량 분석 종합','규칙에 따른 점검 순서이며, 원인이나 통계적 유의성을 입증하지 않습니다.','<div class="grid">'+cards+'</div><h3 style="margin-top:14px">해당 범위의 최신 경보</h3>'+hit+'<h3 style="margin-top:14px">부족액 상위 기여 조합</h3>'+(evidence?'<p class="note">위 경보 요약은 '+esc(pointLabel(evidence))+' 기준입니다. 아래 기여 조합은 탐색 범위 기준입니다.</p>':'')+decomp);
  }
  $('view').innerHTML=html;
+}
+function setImportStatus(kind,message){
+ const status=$('csvStatus');
+ status.dataset ??= {};
+ status.dataset.kind=kind; status.textContent=message;
+}
+function finishWorker(){
+ if(!activeWorker)return;
+ activeWorker.worker.terminate();
+ if(activeWorker.url)URL.revokeObjectURL(activeWorker.url);
+ activeWorker=null;
+}
+function restoreSynthetic(){
+ ({MONTHS,GROUPS,CHANNELS,PRODUCTS,BENEFITS,SEGMENTS,BASE,CANDIDATES}=SYNTHETIC);
+ candidateKeys=new Set(CANDIDATES.map(s=>s.key));candidateLookup=new Map();
+ imported=false;importedMeta=null;state=initial();$('search').value='';
+}
+function resetCsv(){
+ importTicket++;finishWorker();restoreSynthetic();$('csvFiles').value='';
+ setImportStatus('idle','합성 데이터로 돌아왔습니다.');
+}
+function applyImported(data){
+ if(!data||!Array.isArray(data.months)||data.months.length!==3||
+    !/^\d{4}-04$/.test(data.months[0])||data.months[1]!==data.months[0].slice(0,4)+'-05'||
+    data.months[2]!==data.months[0].slice(0,4)+'-06'||
+    !['groups','channels','products','benefits','segments','baseline','candidates'].every(k=>Array.isArray(data[k]))||
+    !data.segments.length||data.baseline.length!==3)throw Error('Invalid local data');
+ MONTHS=data.months;GROUPS=data.groups;CHANNELS=data.channels;PRODUCTS=data.products;BENEFITS=data.benefits;
+ SEGMENTS=data.segments;BASE=data.baseline;CANDIDATES=data.candidates;
+ candidateKeys=new Set(CANDIDATES.map(s=>s.key));candidateLookup=new Map();
+ for(const candidate of CANDIDATES){
+  const key=evidenceKey(candidate.p.id,candidate.c);
+  if(!candidateLookup.has(key))candidateLookup.set(key,[]);
+  candidateLookup.get(key).push(candidate);
+ }
+ imported=true;importedMeta=data.meta??{};state=initial();$('search').value='';
+}
+const MAX_FILE_TOTAL=768*1024*1024;
+function startImport(files){
+ const ticket=++importTicket;
+ finishWorker();restoreSynthetic();
+ if(files.length!==3){setImportStatus('error','4월·5월·6월 CSV를 각각 하나씩, 세 개 함께 선택하세요.');render();return;}
+ if(files.some(f=>!f.size)||files.reduce((n,f)=>n+f.size,0)>MAX_FILE_TOTAL){
+  setImportStatus('error','비어 있지 않은 CSV 세 개를 선택하세요. 전체 파일은 768 MiB 이하여야 합니다.');render();return;
+ }
+ let url=null;
+ try{
+  const source=($('csv-worker-source').textContent||'').trim();
+  if(!source)throw Error('Missing local parser');
+  url=URL.createObjectURL(new Blob([source],{type:'text/javascript'}));
+  const worker=new Worker(url);activeWorker={worker,url};
+  setImportStatus('working','CSV를 현재 브라우저에서 읽는 중입니다.');
+  worker.onmessage=e=>{
+   if(ticket!==importTicket)return;
+   const reply=e.data;
+   if(reply?.type==='progress'){
+    const n=Number.isInteger(reply.done)&&Number.isInteger(reply.total)?' ('+reply.done+'/'+reply.total+')':'';
+    setImportStatus('working','CSV를 현재 브라우저에서 처리 중입니다'+n+'.');return;
+   }
+   finishWorker();
+   if(reply?.type==='result'){
+    try{
+     applyImported(reply.data);
+     setImportStatus('done',MONTHS[0]+'~'+MONTHS[2]+' CSV를 불러왔습니다. 서버 전송은 하지 않았습니다.');
+    }catch{restoreSynthetic();setImportStatus('error','CSV 분석 결과를 표시할 수 없습니다. 월과 열 형식을 다시 확인하세요.');}
+   }else{
+    const message=typeof reply?.message==='string'?reply.message.slice(0,180):'CSV를 읽지 못했습니다. 월과 열 형식을 확인하세요.';
+    setImportStatus('error',message);
+   }
+   render();
+  };
+  worker.onerror=worker.onmessageerror=()=>{
+   if(ticket!==importTicket)return;
+   finishWorker();restoreSynthetic();render();
+   setImportStatus('error','선택한 CSV를 처리하지 못했습니다. 파일 형식과 크기를 확인하세요.');
+  };
+  worker.postMessage({files});render();
+ }catch{
+  if(activeWorker)finishWorker();else if(url)URL.revokeObjectURL(url);
+  render();setImportStatus('error','이 브라우저에서 로컬 분석을 시작하지 못했습니다.');
+ }
 }
 function setState(action,value){
  switch(action){
    case 'step':state.stage=Number(value);break;
-   case 'reset':state=initial();$('search').value='';break;
+   case 'reset':resetCsv();break;
    case 'example':
-   case 'alert':{const s=CANDIDATES.find(x=>x.key===value);if(s)state={...state,stage:1,mi:2,g:s.p.g,c:s.c,attr:s.p.attr,p:s.p.id,b:s.b,r:s.r};break;}
-   case 'pair':{const [g,c]=value.split('|');const a=CANDIDATES.find(s=>s.p.g===g&&s.c===c);
-     state={...state,stage:1,g,c,attr:a?.p.attr??'',p:a?.p.id??0,b:'',r:''};break;}
-   case 'attr':state=value===state.attr?{...state,stage:2}:{...state,stage:2,attr:value,p:0,b:'',r:''};break;
-   case 'allattrs':state={...state,stage:2,attr:'',p:0,b:'',r:''};break;
-   case 'benefit':{const [p,b]=value.split('|');state={...state,stage:3,p:Number(p),b,r:''};break;}
-   case 'rider':state={...state,stage:4,r:value};break;
+   case 'alert':{const s=CANDIDATES.find(x=>x.key===value);if(s)state={...state,stage:1,mi:2,g:s.p.g,c:s.c,attr:candidateAttr(s),p:s.p.id,b:s.b,r:s.r,evidence:s.key};break;}
+   case 'pair':{const [g,c]=JSON.parse(value);const a=CANDIDATES.find(s=>s.p.g===g&&s.c===c);
+     state={...state,stage:1,g,c,attr:candidateAttr(a),p:a?.p.id??0,b:'',r:'',evidence:''};break;}
+   case 'attr':state=value===state.attr?{...state,stage:2}:{...state,stage:2,attr:value,p:0,b:'',r:'',evidence:''};break;
+   case 'allattrs':state={...state,stage:2,attr:'',p:0,b:'',r:'',evidence:''};break;
+   case 'benefit':{const [p,b]=JSON.parse(value);state={...state,stage:3,p:Number(p),b,r:'',evidence:''};break;}
+   case 'rider':state={...state,stage:4,r:value,evidence:''};break;
  }
  return state;
 }
@@ -216,11 +700,15 @@ $('filters').addEventListener('change',e=>{
  const f=e.target.dataset.field;if(!f)return;
  if(f==='mi')state.mi=Number(e.target.value);
  else if(f==='theme')state.theme=e.target.value;
- else if(f==='p')state={...state,p:Number(e.target.value),b:'',r:''};
- else state={...state,[f]:e.target.value,attr:'',p:0,b:'',r:''};
+ else if(f==='p')state={...state,p:Number(e.target.value),b:'',r:'',evidence:''};
+ else state={...state,[f]:e.target.value,attr:'',p:0,b:'',r:'',evidence:''};
  render();$('filters').querySelector('[data-field="'+f+'"]')?.focus();
 });
 $('search').addEventListener('input',renderAlerts);
+$('csvFiles').addEventListener('change',e=>{const files=Array.from(e.target.files||[]);e.target.value='';if(files.length)startImport(files);});
+$('clearCsv').addEventListener('click',()=>{resetCsv();render();$('csvFiles').focus?.();});
+if(typeof window!=='undefined')window.addEventListener('pagehide',()=>{if(imported||activeWorker){resetCsv();render();}});
+
 render();
 </script>
 </body>

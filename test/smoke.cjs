@@ -55,7 +55,7 @@ vm.runInContext(`
   for (const [action, value, expected] of [
     ['alert', candidate.key, '간편고지 × 무·저해지'],
     ['attr', candidate.p.attr, '상품 × 급부'],
-    ['benefit', [candidate.p.id, candidate.b].join('|'), '주계약 × 특약'],
+    ['benefit', JSON.stringify([candidate.p.id, candidate.b]), '주계약 × 특약'],
     ['rider', candidate.r, '월별 추이'],
     ['step', '5', '정량 분석 종합'],
   ]) {
@@ -73,5 +73,60 @@ vm.runInContext(`
   setState('step', '0');
   render();
   assert.equal(($('view').innerHTML.match(/data-action="pair"/g) || []).length, 9);
+  const hostile = '<img src=x onerror=alert(1)>|test';
+  const months = ['2035-04','2035-05','2035-06'];
+  const series = months.map(month => ({month,prem:90000000,pnl:-50000000}));
+  const product = {id:7,code:'DEMO-007',name:hostile,g:hostile,attr:'Y/Y'};
+  const leaf = {key:'leaf',p:product,c:'Synthetic|Channel',b:hostile,r:'Synthetic R',series};
+  const importedCandidate = {...leaf,key:'evidence',a:true,alertB:false,gaps:[.31,.4,.5],shortage:80000000,impact:0,point:{label:hostile}};
+  const bundle = {months,groups:[hostile],channels:[leaf.c],products:[product],benefits:[leaf.b],segments:[leaf],baseline:[.2,.3,.4],candidates:[importedCandidate],meta:{rows:3}};
+  applyImported(bundle);
+  render();
+  assert.match($('dataMode').textContent, /PC에서 불러온 데이터/);
+  assert.match($('alertNote').textContent, /완전 대사되지 않았습니다/);
+  assert.ok(! $('alerts').innerHTML.includes(hostile));
+  assert.ok($('alerts').innerHTML.includes('&lt;img'));
+  assert.match($('candidateCount').textContent, /전체 1개/);
+  assert.equal(counts([leaf]),1);
+  setState('pair', JSON.stringify([hostile,leaf.c]));
+  assert.equal(state.g,hostile);
+  assert.equal(state.c,leaf.c);
+  setState('benefit',JSON.stringify([7,hostile]));
+  assert.equal(state.b,hostile);
+  setState('alert','evidence');
+  setState('step','4');
+  render();
+  assert.match($('view').innerHTML, /선택한 경보 지점/);
+  assert.ok(! $('view').innerHTML.includes(hostile));
+  assert.equal(checkedEvidence().key,'evidence');
+  const globalProduct = {...product,attr:''};
+  const pooledCandidate = {...importedCandidate,p:globalProduct,b:'',r:''};
+  const otherProduct = {id:8,code:'DEMO-008',name:'Other',g:hostile,attr:''};
+  const otherChannelLeaf = {...leaf,key:'another',p:{...otherProduct,attr:'Y/Y'},c:'Other channel'};
+  const extraLeaf = {...leaf,key:'attribute-two',p:{...product,attr:'Y/미분류'}};
+  applyImported({...bundle,products:[globalProduct,otherProduct],segments:[leaf,extraLeaf,otherChannelLeaf],candidates:[pooledCandidate]});
+  setState('alert','evidence');
+  render();
+  assert.equal(state.attr,'','pooled evidence over multiple attributes must not choose one');
+  assert.match($('view').innerHTML,/무저해지 미분류/);
+  setState('attr','Y/Y');
+  assert.deepEqual(filterProducts().map(p=>p.id),[7]);
+  assert.equal(matching({p:0}).length,1);
+  applyImported({...bundle,products:[globalProduct],candidates:[pooledCandidate]});
+  setState('alert','evidence');
+  assert.equal(state.attr,'Y/Y','one supported attribute may be selected automatically');
+  assert.equal(filterProducts().length,1,'global product attr is blank, segment attr controls filtering');
+
+  setState('reset','');
+  render();
+  assert.equal(imported,false);
+  assert.equal(MONTHS[2],'2027-03');
+  assert.equal(CANDIDATES.length,6);
+  assert.equal($('clearCsv').hidden,true);
+  assert.ok(! $('alerts').innerHTML.includes('&lt;img'));
+  assert.throws(()=>applyImported({...bundle,months:['<b>bad','x','y']}));
+  startImport([{size:1}]);
+  assert.match($('csvStatus').textContent,/세 개 함께/);
+  assert.equal(imported,false);
 `, context);
-console.log('Passed: offline render, unique synthetic segments, A/B rules, six views, month selector, reset');
+console.log('Passed: offline render, unique synthetic segments, A/B rules, six views, month selector, imported escaping and evidence scope, reset');
