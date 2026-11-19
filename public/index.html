@@ -36,6 +36,19 @@ body[data-theme="black"] :is(.bad,.import-status[data-kind="error"]){color:var(-
 body[data-theme="black"] .tag.local{background:#242f48;border-color:#3f5480;color:#d3e0ff}
 body[data-theme="black"] .bar{background:#d28e82}
 body[data-theme="black"] input::placeholder{color:var(--sub)}
+
+/* Presentation layout mirrors the reference; palette tokens also support black. */
+.presentation-pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.18fr);gap:18px;align-items:start}
+.presentation-card{min-width:0;padding:18px;border:1px solid var(--line);border-radius:14px;background:var(--card)}
+.presentation-card h3{font-size:16px;font-weight:650;margin-bottom:14px}.summary-hint{color:var(--sub);font-size:12px;margin:10px 0}
+.metric-matrix{min-width:420px;table-layout:fixed;font-variant-numeric:tabular-nums}.metric-matrix th:first-child{width:132px}.metric-matrix thead th{text-align:center;height:60px}.metric-matrix tbody th{font-size:12px;background:var(--soft);font-weight:550}.metric-matrix td{text-align:right;padding:0;font-size:17px}.metric-matrix .primary-metric td{font-size:23px;font-weight:650}.summary-cell{display:block;width:100%;min-height:68px;padding:14px 12px;text-align:right;border:0;background:transparent;color:inherit;font:inherit;cursor:pointer}.summary-cell:hover{box-shadow:inset 0 0 0 2px var(--focus)}.current-month{box-shadow:inset 0 3px var(--focus)}
+.adverse{color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--card))}.favorable{color:#285b83;background:color-mix(in srgb,#285b83 7%,var(--card))}.presentation-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;margin:13px 0;color:var(--sub)}.presentation-legend .favorable{background:none}.presentation-empty{min-height:300px;display:grid;place-content:center;justify-items:center;gap:22px;text-align:center}.presentation-empty h2{font-size:19px;font-weight:500}
+.rider-scroll{max-height:580px}.rider-matrix{min-width:720px;table-layout:auto}.rider-matrix th:first-child{min-width:180px;position:sticky;left:0;background:var(--card);z-index:2}.rider-matrix thead th:first-child{z-index:3}.rider-matrix thead th{height:60px}.rider-matrix td{min-width:104px;text-align:right;font-variant-numeric:tabular-nums}.rider-matrix td:nth-child(n+4){padding:5px}.matrix-amount{width:100%;min-height:62px;border:1px solid var(--line);border-radius:6px;font:inherit;font-weight:600;text-align:right;padding:12px;color:var(--ink);background:var(--soft)}.matrix-amount.adverse{color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--card))}.matrix-amount.favorable{color:#285b83;background:color-mix(in srgb,#285b83 9%,var(--card))}.matrix-amount:hover{outline:1px solid var(--focus)}.code-button{padding:5px 0;border:0;background:none;color:var(--ink);font-size:14px;font-weight:650;text-align:left}.code-button:hover{color:var(--focus)}.review-toggle{font-size:12px;color:var(--sub);display:flex;align-items:center;gap:6px}.missing{color:var(--sub)}
+.ps-scope{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:18px;font-size:12px;color:var(--sub)}.ps-scope strong{padding:5px 10px;border:1px solid var(--line);border-radius:999px;background:var(--soft);color:var(--ink)}.ps-conclusion{padding:22px 24px;border-left:3px solid var(--accent);border-radius:0 12px 12px 0;background:color-mix(in srgb,var(--accent) 5%,var(--card))}.ps-conclusion h2{font-size:20px;line-height:1.55;margin-bottom:12px}.ps-conclusion p{font-size:15px;line-height:1.9;margin:10px 0 0;word-break:keep-all;overflow-wrap:anywhere}.ps-evidence-detail{margin-top:22px;border:1px solid var(--line);border-radius:9px;padding:0 16px}.ps-evidence-detail>summary{padding:14px 0;font-size:14px;font-weight:650;cursor:pointer}.ps-stage-evidence{list-style:none;padding:0;margin:0}.ps-stage-evidence li{display:flex;gap:14px;padding:15px 0;border-top:1px solid var(--line)}.ps-stage-number{display:grid;place-items:center;flex:0 0 28px;height:28px;border-radius:7px;background:var(--soft);color:var(--sub);font-size:12px}.ps-stage-evidence h3{font-size:13px;margin:3px 0 6px}.ps-stage-evidence p{font-size:13px;line-height:1.8;color:var(--sub)}.ps-evidence-heading{display:flex;justify-content:flex-end;margin:12px 0}.ps-notes{padding:12px 14px;border:1px solid var(--line);border-radius:9px}.ps-notes p{font-size:11px;line-height:1.7;color:var(--sub);margin:3px 0}#copyStatus{font-size:12px;color:var(--accent);margin-top:12px}
+body[data-theme="black"] .favorable{color:#9ac5e4}body[data-theme="black"] .matrix-amount.favorable{color:#9ac5e4;background:#192b3b}
+@media(max-width:900px){.presentation-pair{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){.presentation-card{padding:13px}.ps-conclusion{padding:17px 16px}.ps-conclusion h2{font-size:17px}.ps-conclusion p{font-size:14px}.metric-matrix{min-width:380px}.rider-matrix th:first-child{min-width:140px}}
+
 </style>
 </head>
 <body>
@@ -203,10 +216,10 @@ function parseOne(file,encoding,onBytes) {
     const stream=file.stream().getReader();
     let schema, width, month=null, bytes=0, rows=0, totalRows=0, detailRows=0, reported=0, measureMismatch=0;
     const hint=namedMonth(file.name??'');
-    const totals=[0,0], details=[0,0], map=new Map();
+    const totals=[0,0], details=[0,0], map=new Map(), leaves=new Map();
     function addScope(level,p,c,b,r,elapsed,detailCode,prem,pnl){
       const key=tuple([level,p.g,c,p.code,p.attr,b,r,elapsed,detailCode]);
-      addPoint(map,{level,key,p,c,b,r,elapsed,detailCode},prem,pnl);
+      addPoint(level==='leaf'?leaves:map,{level,key,p,c,b,r,elapsed,detailCode},prem,pnl);
     }
     const scanner=makeScanner((cells,num)=>{
       if(!schema){schema=byHeader(cells);width=cells.length;return;}
@@ -249,13 +262,24 @@ function parseOne(file,encoding,onBytes) {
         if(!inRange(totalsMeasures[0],prem)||!inRange(totalsMeasures[1],pnl)) measureMismatch++;
       }
       for(const [bn,bp,bq] of measures){
+        // Keep observed zeroes and the two independent breakdowns for presentation.
+        // They are not additional money in the portfolio or additional alert points.
+        const leafProduct={...p,attr:scopedAttrs};
+        addScope('leaf',leafProduct,c,bn,r,'','',bp,bq);
+        const leaf=leaves.get(tuple(['leaf',p.g,c,p.code,scopedAttrs,bn,r,'','']));
+        leaf.breakdowns ??= {fine:new Map(),durations:new Map()};
+        for(const [axis,value] of [['fine',detail],['durations',elapsed]]){
+          if(!value)continue;
+          const parts=leaf.breakdowns[axis];
+          if(!parts.has(value))parts.set(value,[0,0]);
+          add(parts.get(value),bp,bq);
+        }
         if(bp===0&&bq===0)continue;
         // Do not include overlapping broad-benefit subtotal columns or subtotal duration rows.
         addScope('benefit',p,c,bn,'','','',bp,bq);
         addScope('contract',p,c,bn,r,'','',bp,bq);
         addScope('child',p,c,bn,r,'',detail,bp,bq);
         addScope('elapsedContract',p,c,bn,r,elapsed,'',bp,bq);
-        addScope('leaf',{...p,attr:scopedAttrs},c,bn,r,'','',bp,bq);
       }
     });
     function decode(chunk,opts){
@@ -282,7 +306,7 @@ function parseOne(file,encoding,onBytes) {
       if(x<=0 || totals[1]/totals[0]-y/x<0.3-1e-10) map.delete(key);
     }
     const hasBenefit=!!schema.wide||schema.benefit>=0, hasContract=schema.contract>=0||schema.contractType>=0;
-    return {month,rows,totalRows,detailRows,totals,balanced,measureMismatch,encoding,map,hasBenefit,hasContract};
+    return {month,rows,totalRows,detailRows,totals,balanced,measureMismatch,encoding,map,leaves,hasBenefit,hasContract};
  })();
 }
 async function parseFallback(file,onBytes){
@@ -335,14 +359,22 @@ function combine(reports){
    if(id===undefined){id=products.length+1;ids.set(key,id);products.push({...p,id});}
    return {...p,id};
  };
- function seriesFor(key){
-  return reports.map((x,i)=>{const [p,q]=x.map.get(key)?.amounts??[0,0];return {month:months[i],prem:p/100,pnl:q/100};});
+ function seriesFor(key,source='map'){
+  return reports.map((x,i)=>{const entry=x[source].get(key);const [p,q]=entry?.amounts??[0,0];return {month:months[i],prem:p/100,pnl:q/100,observed:!!entry};});
  }
  const leafKeys=new Map();
- for (const {map} of reports) for(const [key,p] of map) if(p.level==='leaf') leafKeys.set(key,p);
+ for (const {leaves} of reports) for(const [key,p] of leaves) leafKeys.set(key,p);
  for(const [key,s] of leafKeys){
    const p=getProduct(s.p); const {c,b,r}=s; groups.add(p.g);channels.add(c);benefits.add(b);riders.add(r);attrs.add(p.attr);
-   segments.push({key,p,c,b,r,series:seriesFor(key)});
+   const breakdowns={};
+   for(const axis of ['fine','durations']){
+     const values=new Set(reports.flatMap(x=>[...(x.leaves.get(key)?.breakdowns?.[axis]?.keys()??[])]));
+     breakdowns[axis]=[...values].map(value=>({value,series:reports.map((x,i)=>{
+       const amounts=x.leaves.get(key)?.breakdowns?.[axis]?.get(value);
+       return {month:months[i],prem:amounts?amounts[0]/100:0,pnl:amounts?amounts[1]/100:0,observed:!!amounts};
+     })}));
+   }
+   segments.push({key,p,c,b,r,series:seriesFor(key,'leaves'),...breakdowns});
  }
  const found=new Map();
  const fields=['product','benefit','contract','child','elapsedContract','simple','low','attr'];
@@ -420,7 +452,10 @@ let SEGMENTS=PRODUCTS.flatMap(p=>CHANNELS.flatMap((c,ci)=>BENEFITS.flatMap((b,bi
    const rate=(tag==='A'?[-.29,-.62,-.82]:tag==='B'?[-.40,-.22,-.85]:tag==='AB'?[-.29,-.55,-1.16]:[.19+(k%23)/100,.20+((k+7)%23)/100,.23+((k+13)%23)/100])[mi];
    return {month,prem,pnl:Math.round(prem*rate)};
  });
- return {key:[p.id,ci,bi,ri].join('-'),p,c,b,r,series};
+ const split=(values,weights)=>values.map((value,j)=>({value,series:series.map(x=>({...x,prem:x.prem*weights[j],pnl:x.pnl*weights[j],observed:true}))}));
+ return {key:[p.id,ci,bi,ri].join('-'),p,c,b,r,series,
+   fine:split(['가상 세부급부 01','가상 세부급부 02'],[.65,.35]),
+   durations:split(['1차','2차','3차'],[.5,.3,.2])};
 }))));
 const fold=(segments,mi)=>segments.reduce((a,s)=>({prem:a.prem+s.series[mi].prem,pnl:a.pnl+s.series[mi].pnl}),{prem:0,pnl:0});
 const ratio=x=>x.prem>0?x.pnl/x.prem:null;
@@ -447,7 +482,7 @@ let candidateKeys=new Set(CANDIDATES.map(s=>s.key));
 const SYNTHETIC={MONTHS,GROUPS,CHANNELS,PRODUCTS,BENEFITS,SEGMENTS,BASE,CANDIDATES};
 let imported=false, activeWorker=null, importTicket=0, importedMeta=null, candidateLookup=new Map();
 const STEPS=['상품군 × 채널','간편고지 × 무·저해지','상품 × 급부','주계약·특약','경과·월별 변화','정량 분석 종합'];
-const initial=()=>({stage:-1,mi:2,g:'',c:'',attr:'',p:0,b:'',r:'',theme:'',evidence:''});
+const initial=()=>({stage:-1,mi:2,g:'',c:'',attr:'',p:0,b:'',r:'',theme:'',evidence:'',summary:null,originMonth:null,riderSearch:'',showAllRiders:false});
 let state=initial();
 const $=id=>document.getElementById(id);
 const numberFormat=new Intl.NumberFormat('ko-KR',{maximumFractionDigits:1,minimumFractionDigits:1});
@@ -554,6 +589,103 @@ function render(){
  $('bottom').innerHTML='<span>'+(isAlert?'시작 · 경보 후보':'현재 '+(state.stage+1)+'단계 · '+STEPS[state.stage])+'</span><div>'+(isAlert?'':btn('이전', 'step',state.stage-1)+' ')+(state.stage<5?btn((state.stage+2)+'단계 · '+STEPS[state.stage+1],'step',state.stage+1)+' ':'')+btn('초기화','reset','')+'</div>';
  if(document.body)document.body.dataset.theme=state.theme;
 }
+// Presentation data always comes from the fixed navigation scope, never a ranked alert's series.
+const PRESENT_METRICS=[['shortfall','기준 대비 부족액','백만원'],['rate','손익률','%'],['prem','위험보험료','백만원']];
+const decimal=x=>Number.isFinite(x)?x.toLocaleString('ko-KR',{minimumFractionDigits:2,maximumFractionDigits:2}):'—';
+const signedMoney=x=>Number.isFinite(x)?(x>0?'+':'')+decimal(x/1e6):'—';
+const monthLabel=m=>m.slice(0,4)+'년 '+Number(m.slice(5))+'월';
+function observedSum(rows){
+ const available=rows.filter(x=>x&&x.observed!==false);
+ return available.length?available.reduce((a,x)=>({prem:a.prem+x.prem,pnl:a.pnl+x.pnl,observed:true}),{prem:0,pnl:0,observed:true}):null;
+}
+function atMonth(segments,mi){return observedSum(segments.map(s=>s.series[mi]));}
+function breakdown(segments,axis,mi){
+ const groups=new Map();
+ for(const s of segments)for(const part of s[axis]??[]){
+   if(!groups.has(part.value))groups.set(part.value,[]);
+   groups.get(part.value).push(part.series[mi]);
+ }
+ return new Map([...groups].map(([key,rows])=>[key,observedSum(rows)]));
+}
+function metricValue(x,metric,mi){return !x?null:metric==='shortfall'?short(x,mi):metric==='rate'?ratio(x):x.prem;}
+function metricLabel(x,metric,mi){
+ const value=metricValue(x,metric,mi);
+ return value===null?(x&&metric==='rate'?'산출 보류':'—'):metric==='rate'?decimal(value*100):metric==='shortfall'?signedMoney(value):decimal(value/1e6);
+}
+function amountSentence(x,mi){return x?'손익률 '+(ratio(x)===null?'산출 보류':decimal(ratio(x)*100)+'%')+', 기준 대비 부족액 '+signedMoney(short(x,mi))+'백만원, 위험보험료 '+decimal(x.prem/1e6)+'백만원':'관측 자료가 없습니다';}
+const legend=()=>'<div class="presentation-legend"><span class="bad">양수: 기준 대비 부족</span><span class="favorable">음수: 기준 대비 유리</span><span>단위: 백만원</span></div>';
+function emptyStep(title,step,label){return '<div class="presentation-empty"><h2>'+esc(title)+'</h2>'+btn(label,'step',step)+'</div>';}
+function riderModels(){
+ const segments=matching({r:''});
+ const models=scopes(segments,s=>s.r).map(([r,rows])=>({r,rows,total:atMonth(rows,state.mi),fine:breakdown(rows,'fine',state.mi)}));
+ const totalPositive=models.reduce((a,m)=>a+Math.max(0,m.total?short(m.total,state.mi):0),0);
+ models.sort((a,b)=>(b.total?short(b.total,state.mi):-Infinity)-(a.total?short(a.total,state.mi):-Infinity)||a.r.localeCompare(b.r,'ko',{numeric:true}));
+ let cumulative=0;
+ for(const model of models){
+   const positive=Math.max(0,model.total?short(model.total,state.mi):0);
+   model.share=totalPositive>0?positive/totalPositive:null;
+   model.selected=positive>0&&cumulative<totalPositive*.8;
+   cumulative+=positive;
+   model.signal=[...model.fine.values()].some(x=>x&&short(x,state.mi)>=1e6);
+   const previous=state.mi>0?atMonth(model.rows,state.mi-1):null;
+   model.temporal=!!(previous&&model.total&&ratio(previous)!==null&&ratio(model.total)!==null&&(ratio(previous)-ratio(model.total))*model.total.prem>=1e6);
+   model.masked=!!(model.total&&short(model.total,state.mi)<=0&&model.signal);
+ }
+ return models;
+}
+function renderRiderMatrix(){
+ if(!state.p||!state.b)return emptyStep('3단계에서 상품과 급부를 선택하세요',2,'상품 × 급부 매트릭스');
+ const models=riderModels(), anyDefault=models.some(m=>m.selected||m.signal||m.temporal);
+ const term=state.riderSearch.toLowerCase();
+ const shown=models.filter(m=>(state.showAllRiders||!anyDefault||m.selected||m.signal||m.temporal||state.r===m.r)&&m.r.toLowerCase().includes(term));
+ const allColumns=[...new Set(shown.flatMap(m=>[...m.fine.keys()]))].sort((a,b)=>a.localeCompare(b,'ko',{numeric:true}));
+ const columns=allColumns.slice(0,18), remainder=allColumns.slice(18);
+ const cellButton=(r,x,label)=>x?'<button class="matrix-amount '+(short(x,state.mi)>0?'adverse':short(x,state.mi)<0?'favorable':'')+'" data-action="rider" data-value="'+esc(r)+'" aria-label="'+esc(r+' · '+label+' · 5단계 보기')+'">'+signedMoney(short(x,state.mi))+'</button>':'<span class="missing">—</span>';
+ const positiveLabel=m=>m.share===null?'비중 산출 보류':decimal(m.share*100)+'%';
+ const tableHtml='<div class="scroll rider-scroll" role="region" tabindex="0" aria-label="주계약·특약과 세부급부 교차"><table class="rider-matrix"><thead><tr><th scope="col">주계약·특약 코드</th><th scope="col">코드 부족액<small>양의 부족액 비중</small></th><th scope="col">코드 손익률</th>'+columns.map(v=>'<th scope="col">'+esc(v)+'</th>').join('')+(remainder.length?'<th scope="col">기타 세부급부<small>미표시 코드 합계</small></th>':'')+'</tr></thead><tbody>'+shown.map(m=>'<tr><th scope="row">'+btn(m.r,'rider',m.r,'code-button')+'<small>'+(m.selected?'누적 선정':m.signal||m.temporal?'추가 점검':'검토 목록')+(m.masked?' · 하위 가림':'')+(m.temporal?' · 전월':'')+'</small></th><td class="num">'+(m.total?signedMoney(short(m.total,state.mi)):'—')+'<small>'+positiveLabel(m)+'</small></td><td class="num">'+metricLabel(m.total,'rate',state.mi)+(m.total&&ratio(m.total)!==null?'%':'')+'</td>'+columns.map(v=>'<td>'+cellButton(m.r,m.fine.get(v),v)+'</td>').join('')+(remainder.length?'<td>'+cellButton(m.r,observedSum(remainder.map(v=>m.fine.get(v))),'기타 세부급부')+'</td>':'')+'</tr>').join('')+'</tbody></table></div>';
+ return '<div class="sect"><h2>분석 4단계 · '+esc(state.b)+' 주계약·특약 매트릭스</h2><label class="review-toggle"><input id="allRiders" type="checkbox" '+(state.showAllRiders?'checked':'')+'> 검토 목록 전체 ('+models.length+')</label></div><div class="search-line"><input id="riderSearch" type="search" aria-label="주계약 특약 코드 검색" placeholder="주계약·특약 코드 검색" value="'+esc(state.riderSearch)+'"><span>표시 '+shown.length+'개 · 코드 선택 → 5단계</span></div>'+legend()+tableHtml+(!shown.length?'<p class="empty">검색 조건에 해당하는 주계약·특약이 없습니다.</p>':'')+'<p class="note">누적 선정은 양의 코드 부족액 80%까지이며 하위·전월 징후도 표시합니다. 기타 세부급부는 미표시 코드의 합계입니다. —는 자료 미제공이며 0이 아닙니다.</p>';
+}
+function metricMatrix(title,columns,kind,scope,note){
+ return '<section class="presentation-card"><h3>'+title+'</h3><p class="note">'+esc(scope)+'</p><p class="summary-hint">수치 칸 선택 → 6단계 종합</p><div class="scroll" role="region" tabindex="0" aria-label="'+title+'"><table class="metric-matrix"><thead><tr><th scope="col">확인 항목<small>금액: 백만원</small></th>'+columns.map(col=>'<th scope="col" class="'+(kind==='month'&&col.mi===state.mi?'current-month':'')+'">'+esc(col.label)+(kind==='month'&&col.mi===state.mi?'<small>분석월</small>':'')+(!col.row?'<small>자료 미제공</small>':'')+'</th>').join('')+'</tr></thead><tbody>'+PRESENT_METRICS.map(([metric,label,unit])=>'<tr class="'+(metric==='shortfall'?'primary-metric':'')+'"><th scope="row">'+label+'<small>'+unit+'</small></th>'+columns.map(col=>{
+   const value=metricValue(col.row,metric,col.mi), tone=metric==='shortfall'&&value!==null?(value>0?'adverse':value<0?'favorable':''):'';
+   return '<td class="'+tone+'">'+(value===null?metricLabel(col.row,metric,col.mi):'<button class="summary-cell" data-action="summary" data-value="'+esc(JSON.stringify({kind,value:col.value,metric}))+'" aria-label="'+esc(col.label+' '+label+' '+metricLabel(col.row,metric,col.mi)+' '+unit+' · 6단계 종합')+'">'+metricLabel(col.row,metric,col.mi)+'</button>')+'</td>';
+ }).join('')+'</tr>').join('')+'</tbody></table></div>'+legend()+'<p class="note">'+note+'</p></section>';
+}
+function fixedScopeReady(){return !!(state.g&&state.c&&state.p&&state.b&&state.r);}
+function renderChanges(){
+ if(!fixedScopeReady())return emptyStep('4단계에서 주계약·특약 코드를 선택하세요',3,'주계약·특약 매트릭스');
+ const rows=matching(), durations=breakdown(rows,'durations',state.mi);
+ const columns=[...new Set(['1차','2차','3차',...durations.keys()])].sort((a,b)=>a.localeCompare(b,'ko',{numeric:true})).map(value=>({value,label:value,row:durations.get(value),mi:state.mi}));
+ const months=MONTHS.slice(0,state.mi+1).map((value,mi)=>({value,label:monthLabel(value),mi,row:atMonth(rows,mi)}));
+ return '<div class="sect"><div><h2>분석 5단계 · 선택 코드의 경과구분과 월별 변화</h2><p class="note">고정한 분석 대상: '+esc(state.r+' · '+state.b+' · '+(state.attr?attrLabel(state.attr):'전체 속성'))+'</p></div></div><div class="presentation-pair">'+metricMatrix('이번 달 경과구분',columns,'duration',monthLabel(MONTHS[state.mi])+' · '+state.r+' · '+state.b,'이번 달의 경과별 분해입니다. —는 자료 미제공이며 0이 아닙니다. 오른쪽 월별 변화는 경과 전체 값입니다.')+metricMatrix('같은 코드의 월별 변화',months,'month',state.r+' · '+state.b+' · 경과 전체','월별 기준 손익률을 적용한 코드·급부 전체 값입니다. 월별 금액은 합산·차감하지 않습니다. —는 관측 없음이며 0이 아닙니다.')+'</div>';
+}
+function buildPresentationSummary(){
+ const mi=state.mi, segments=matching(), x=atMonth(segments,mi);
+ const selection=state.summary??{kind:'overview',metric:'shortfall'};
+ const metric=PRESENT_METRICS.find(m=>m[0]===selection.metric)??PRESENT_METRICS[0];
+ const selected=selection.kind==='duration'?breakdown(segments,'durations',mi).get(selection.value):x;
+ const label=selection.kind==='duration'?selection.value+' · '+metric[1]:selection.kind==='month'?monthLabel(MONTHS[mi])+' · '+metric[1]:'선택 코드 전체';
+ const product=PRODUCTS.find(p=>p.id===state.p);
+ const rootRows=matching({attr:'',p:0,b:'',r:''}), attrRows=matching({p:0,b:'',r:''}), productRows=matching({b:'',r:''}), benefitRows=matching({r:''});
+ const prev=mi>0?atMonth(segments,mi-1):null, currentRate=x?ratio(x):null, prevRate=prev?ratio(prev):null;
+ const gap=selected?short(selected,mi):null;
+ const headline=gap===null?'선택 범위의 관측 자료를 확인하세요.':gap>0?state.r+'의 '+(selection.kind==='duration'?selection.value:'선택 범위')+'에서 기준 대비 부족액이 확인됩니다.':gap<0?state.r+'의 선택 범위는 동월 전체 기준을 상회합니다.':state.r+'의 선택 범위는 동월 전체 기준과 같습니다.';
+ const paragraphs=[monthLabel(MONTHS[mi])+' · '+state.g+' × '+state.c+' · '+(product?.name??'')+' · '+state.b+' · '+(state.attr?attrLabel(state.attr):'전체 속성')+'으로 분석 대상을 고정했습니다.',
+   label+': '+amountSentence(selected,mi)+'.',
+   selection.kind==='duration'?'선택한 경과구분은 이번 달 코드 전체를 나눈 값입니다. 월별 비교는 같은 코드·급부의 경과 전체를 유지합니다.':'동일한 상품·급부·주계약/특약 코드의 값을 비교하며 월별 순위에 따라 코드를 바꾸지 않습니다.',
+   currentRate!==null&&prevRate!==null?'직전 월 대비 같은 코드의 손익률은 '+decimal(Math.abs(currentRate-prevRate)*100)+'%p '+(currentRate<prevRate?'하락':currentRate>prevRate?'상승':'변화 없음')+'입니다.':'비교 가능한 직전 월 손익률이 없어 전월 변화 판단을 보류합니다.'];
+ const rootCandidates=CANDIDATES.filter(c=>c.p.g===state.g&&c.c===state.c);
+ const policy=mi===MONTHS.length-1?'전체 속성 기준 경보 후보 '+new Set(rootCandidates.map(c=>c.p.id)).size+'개.':'3개월 이력이 부족하여 A/B 판정을 보류합니다.';
+ const stages=[['상품군 × 채널',amountSentence(atMonth(rootRows,mi),mi)+'. '+policy],['간편고지 × 무·저해지',(state.attr?attrLabel(state.attr):'전체 속성')+' · '+amountSentence(atMonth(attrRows,mi),mi)+'.'],['상품 × 급부',(product?.name??'')+' 상품: '+amountSentence(atMonth(productRows,mi),mi)+'. '+state.b+': '+amountSentence(atMonth(benefitRows,mi),mi)+'.'],['주계약·특약',state.r+' · '+amountSentence(x,mi)+'.'],['경과구분·월별 변화',label+' · '+amountSentence(selected,mi)+'. '+paragraphs[3]]];
+ const notes=['경과구분과 세부급부는 같은 금액의 서로 다른 분해입니다. 서로 합산하지 않으며 월별 금액도 합산·차감하지 않습니다.','경보 선정은 전체 속성 범위의 판정입니다. 선택 속성이나 선택 코드만의 경보 조건 충족을 의미하지 않습니다. 정량적 집중 지점을 원인으로 확정하지 않습니다.'];
+ return {label,headline,paragraphs,stages,notes,copyText:['분석 6단계 · 정량 분석 종합',label,headline,...paragraphs,'1~5단계 수치 근거',...stages.map(([title,text],i)=>(i+1)+'. '+title+'\n'+text),...notes].join('\n\n')};
+}
+function renderSummary(){
+ if(!fixedScopeReady())return emptyStep('5단계에서 종합할 대상을 선택하세요',3,'주계약·특약 매트릭스');
+ const report=buildPresentationSummary();
+ return '<section class="ps-summary"><div class="sect"><h2>분석 6단계 · 정량 분석 종합</h2>'+btn('종합 문구 복사','copy-summary','','minor')+'</div><div class="ps-scope"><span>'+monthLabel(MONTHS[state.mi])+'</span><strong>'+esc(report.label)+'</strong></div><div class="ps-conclusion"><h2>'+esc(report.headline)+'</h2>'+report.paragraphs.map(p=>'<p>'+esc(p)+'</p>').join('')+'</div><details class="ps-evidence-detail"><summary>1~5단계 수치 근거</summary><ol class="ps-stage-evidence">'+report.stages.map(([title,text],i)=>'<li><span class="ps-stage-number">'+(i+1)+'</span><div><h3>'+esc(title)+'</h3><p>'+esc(text)+'</p></div></li>').join('')+'</ol></details><div class="ps-evidence-heading">'+btn('5단계 수치 다시 보기','summary-back','','minor')+'</div><div class="ps-notes">'+report.notes.map(p=>'<p>'+esc(p)+'</p>').join('')+'</div><p id="copyStatus" role="status"></p></section>';
+}
+
 function renderStage(){
  let html='';
  if(state.stage===0){
@@ -590,24 +722,11 @@ function renderStage(){
     html=section('분석 3단계 · 상품 × 급부','기준 대비 부족액(백만원) · 붉은색: 부족 · 녹색: 기준 상회',groups.length?((allGroups.length>150||BENEFITS.length>35)?'<p class="note">최대 150개 상품과 35개 급부를 표시합니다. 상품을 선택해 범위를 좁힐 수 있습니다.</p>':'')+matrix:'<p class="empty">선택 범위에 상품이 없습니다.</p>');
    }
  }else if(state.stage===3){
-   const rows=scopes(matching({r:''}),s=>s.r).map(([k,s])=>[esc(k),...summaryRow(s),btn('월별 보기','rider',k)]);
-   html=section('분석 4단계 · 주계약 × 특약','같은 상품·급부에서 손익 악화가 어느 담보에 나타나는지 확인합니다.',table(['담보',...SUM_HEADERS,'다음 단계'],rows));
+   html=renderRiderMatrix();
  }else if(state.stage===4){
-   const s=matching(), evidence=checkedEvidence(), series=MONTHS.map((m,i)=>financeScope(s,i));
-   const chart='<div class="chart" aria-label="기준 대비 열위폭 차트">'+series.map((x,i)=>{
-    const rr=ratio(x), gap=rr==null||BASE[i]==null?null:BASE[i]-rr;
-    const w=Math.min(100,Math.max(0,(gap??0)*60));
-    return '<div class="chart-row"><span>'+MONTHS[i]+'</span><div class="bar-track" aria-hidden="true"><div class="bar" style="width:'+w+'%"></div></div><span class="score">'+pp(gap)+'</span></div>';
-   }).join('')+'</div>';
-   const rows=series.map((x,i)=>[MONTHS[i],n(pct(ratio(x))),n(pct(BASE[i])),n(won(x.prem)),n(won(x.pnl)),n(won(short(x,i)),pos(short(x,i)))]);
-   html=section('분석 5단계 · 월별 추이','선택 범위의 손익률과 각 월 전체 기준을 함께 비교합니다.',(evidence?'<p class="note">선택한 경보 지점: '+esc(pointLabel(evidence))+'</p>':'')+chart+table(['기준월','선택 범위 손익률','동월 전체 손익률','위험보험료','위험차익','기준 대비 부족액'],rows)+'<p class="note">'+btn('정량 분석 종합','step',5)+'</p>');
+   html=renderChanges();
  }else{
-   const s=matching(), evidence=checkedEvidence(), x=financeScope(s,state.mi), gap=short(x,state.mi), rr=ratio(x), candidates=imported?relevantCandidates(s).slice(0,100):CANDIDATES.filter(a=>candidateKeys.has(a.key)&&s.some(v=>v.key===a.key)).slice(0,100);
-   const parts=scopes(s,v=>v.p.name+' · '+v.b+' · '+v.r).map(([label,v])=>[label,short(fold(v,state.mi),state.mi)]).sort((a,b)=>b[1]-a[1]).slice(0,3);
-   const cards=[['위험률차손익률',pct(rr)],['동월 기준 대비 열위',pp(rr==null||BASE[state.mi]==null?null:BASE[state.mi]-rr)],['동월 기준 대비 부족액',won(gap)]].map(([a,b])=>'<div class="card"><p class="kpi-label">'+a+'</p><p class="kpi-value">'+b+'</p></div>').join('');
-   const hit=candidates.length?'<ul class="list">'+candidates.map(a=>'<li>'+esc(a.p.name+' · '+a.c+' · '+pointLabel(a))+' '+badge(a)+'</li>').join('')+'</ul>':'<p class="note">이 범위에서 최신월의 A/B 조건을 충족한 상세 조합은 없습니다.</p>';
-   const decomp=parts.length?'<ol class="list">'+parts.map(([label,delta])=>'<li>'+esc(label)+' · '+won(delta)+'</li>').join('')+'</ol>':'<p class="note">선택 범위에 값이 없습니다.</p>';
-   html=section('분석 6단계 · 정량 분석 종합','규칙에 따른 점검 순서이며, 원인이나 통계적 유의성을 입증하지 않습니다.','<div class="grid">'+cards+'</div><h3 style="margin-top:14px">해당 범위의 최신 경보</h3>'+hit+'<h3 style="margin-top:14px">부족액 상위 기여 조합</h3>'+(evidence?'<p class="note">위 경보 요약은 '+esc(pointLabel(evidence))+' 기준입니다. 아래 기여 조합은 탐색 범위 기준입니다.</p>':'')+decomp);
+   html=renderSummary();
  }
  $('view').innerHTML=html;
 }
@@ -625,7 +744,7 @@ function finishWorker(){
 function restoreSynthetic(){
  ({MONTHS,GROUPS,CHANNELS,PRODUCTS,BENEFITS,SEGMENTS,BASE,CANDIDATES}=SYNTHETIC);
  candidateKeys=new Set(CANDIDATES.map(s=>s.key));candidateLookup=new Map();
- imported=false;importedMeta=null;state=initial();$('search').value='';
+ imported=false;importedMeta=null;state={...initial(),theme:state.theme};$('search').value='';
 }
 function resetCsv(){
  importTicket++;finishWorker();restoreSynthetic();$('csvFiles').value='';
@@ -645,7 +764,7 @@ function applyImported(data){
   if(!candidateLookup.has(key))candidateLookup.set(key,[]);
   candidateLookup.get(key).push(candidate);
  }
- imported=true;importedMeta=data.meta??{};state=initial();$('search').value='';
+ imported=true;importedMeta=data.meta??{};state={...initial(),theme:state.theme};$('search').value='';
 }
 const MAX_FILE_TOTAL=768*1024*1024;
 function startImport(files){
@@ -693,7 +812,19 @@ function startImport(files){
  }
 }
 function setState(action,value){
+ if(!['summary','summary-back','copy-summary'].includes(action)){state.summary=null;state.originMonth=null;}
  switch(action){
+   case 'summary':{
+     const selection=JSON.parse(value);
+     if(!['duration','month'].includes(selection.kind)||!PRESENT_METRICS.some(m=>m[0]===selection.metric))break;
+     state.originMonth=state.mi;
+     if(selection.kind==='month'){
+       const index=MONTHS.indexOf(selection.value);if(index<0||index>state.mi)break;
+       state.mi=index;
+     }
+     state.summary=selection;state.stage=5;break;
+   }
+   case 'summary-back':state.mi=state.originMonth??state.mi;state.summary=null;state.originMonth=null;state.stage=4;break;
    case 'step':state.stage=Number(value);break;
    case 'reset':resetCsv();break;
    case 'example':
@@ -702,26 +833,39 @@ function setState(action,value){
      state={...state,stage:1,g,c,attr:candidateAttr(a),p:a?.p.id??0,b:'',r:'',evidence:''};break;}
    case 'attr':state=value===state.attr?{...state,stage:2}:{...state,stage:2,attr:value,p:0,b:'',r:'',evidence:''};break;
    case 'allattrs':state={...state,stage:2,attr:'',p:0,b:'',r:'',evidence:''};break;
-   case 'benefit':{const [p,b]=JSON.parse(value);state={...state,stage:3,p:Number(p),b,r:'',evidence:''};break;}
+   case 'benefit':{state.riderSearch='';state.showAllRiders=false;const [p,b]=JSON.parse(value);state={...state,stage:3,p:Number(p),b,r:'',evidence:''};break;}
    case 'rider':state={...state,stage:4,r:value,evidence:''};break;
  }
  return state;
 }
-document.addEventListener('click',e=>{
+document.addEventListener('click',async e=>{
  const el=e.target.closest('button[data-action]');if(!el)return;
- const {action,value}=el.dataset;setState(action,value);render();
+ const {action,value}=el.dataset;
+ if(action==='copy-summary'){
+   try{await navigator.clipboard.writeText(buildPresentationSummary().copyText);$('copyStatus').textContent='종합 문구를 복사했습니다.';}
+   catch{$('copyStatus').textContent='자동 복사가 불가합니다. 아래 문구를 선택해 복사해 주세요.';}
+   return;
+ }
+ setState(action,value);render();
  if(action==='alert'||action==='example')$('filters').scrollIntoView({block:'start'});
  else if(action==='step'||action==='reset')$('tabs').querySelector('.active')?.focus();
  else {$('view').querySelector('h2')?.setAttribute('tabindex','-1');$('view').querySelector('h2')?.focus();}
 });
 $('filters').addEventListener('change',e=>{
  const f=e.target.dataset.field;if(!f)return;
+ if(f!=='theme'){state.summary=null;state.originMonth=null;state.riderSearch='';}
  if(f==='mi')state.mi=Number(e.target.value);
  else if(f==='theme')state.theme=e.target.value;
  else if(f==='p')state={...state,p:Number(e.target.value),b:'',r:'',evidence:''};
  else state={...state,[f]:e.target.value,attr:'',p:0,b:'',r:'',evidence:''};
  render();$('filters').querySelector('[data-field="'+f+'"]')?.focus();
 });
+$('view').addEventListener('input',e=>{
+ if(e.target.id!=='riderSearch')return;
+ const start=e.target.selectionStart,end=e.target.selectionEnd;state.riderSearch=e.target.value;renderStage();
+ const field=$('riderSearch');field?.focus();field?.setSelectionRange(start,end);
+});
+$('view').addEventListener('change',e=>{if(e.target.id==='allRiders'){state.showAllRiders=e.target.checked;renderStage();$('allRiders')?.focus();}});
 $('search').addEventListener('input',renderAlerts);
 $('csvFiles').addEventListener('change',e=>{const files=Array.from(e.target.files||[]);e.target.value='';if(files.length)startImport(files);});
 $('clearCsv').addEventListener('click',()=>{resetCsv();render();$('csvFiles').focus?.();});

@@ -48,9 +48,12 @@ async function run(){
    assert.equal(CANDIDATES.length,1);
    assert.match($('csvStatus').textContent,/서버 전송은 하지 않았습니다/);
    assert.match($('alerts').innerHTML,/216\\.0/);
-   setState('alert',CANDIDATES[0].key);setState('step','4');render();
-   assert.match($('view').innerHTML,/2025-06/);
-   assert.match($('view').innerHTML,/상품 전체/);
+   setState('alert',CANDIDATES[0].key);
+   const leaf=SEGMENTS.find(s=>s.p.code==='001'&&s.b==='사망');
+   setState('benefit',JSON.stringify([leaf.p.id,leaf.b]));setState('rider',leaf.r);render();
+   assert.match($('view').innerHTML,/2025년 6월/);
+   assert.match($('view').innerHTML,/같은 코드의 월별 변화/);
+   assert.match($('view').innerHTML,/128.00/);
    resetCsv();render();
    assert.equal(imported,false);
    assert.equal(CANDIDATES.length,6);

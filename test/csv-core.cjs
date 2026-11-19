@@ -58,7 +58,16 @@ async function run(){
  assert.deepEqual(result.baseline,[.3,.3,.3]);
  assert.ok(result.meta.balanced);
  assert.equal(result.meta.rows,18);
- assert.equal(result.segments.length,3);
+ assert.equal(result.segments.length,12,'observed zero benefits remain available for the presentation');
+ const leaf=result.segments.find(s=>s.p.code==='001'&&s.b==='사망');
+ assert.equal(leaf.fine[0].value,'01');
+ assert.equal(leaf.fine[0].series[2].pnl,-110e6);
+ assert.equal(leaf.durations[0].value,'1차');
+ assert.equal(leaf.durations.length,1,'overlapping 전체 and 2년이내 are excluded');
+ assert.equal(leaf.durations[0].series[2].prem,60e6);
+ const zero=result.segments.find(s=>s.p.code==='001'&&s.b==='진단');
+ assert.equal(zero.series[2].observed,true);
+ assert.equal(zero.durations[0].series[2].prem,0);
  assert.equal(result.candidates.length,1);
  const [sample]=result.candidates;
  assert.equal(sample.p.code,'001');

@@ -55,8 +55,8 @@ vm.runInContext(`
   for (const [action, value, expected] of [
     ['alert', candidate.key, '간편고지 × 무·저해지'],
     ['attr', candidate.p.attr, '상품 × 급부'],
-    ['benefit', JSON.stringify([candidate.p.id, candidate.b]), '주계약 × 특약'],
-    ['rider', candidate.r, '월별 추이'],
+    ['benefit', JSON.stringify([candidate.p.id, candidate.b]), '주계약·특약 매트릭스'],
+    ['rider', candidate.r, '경과구분과 월별 변화'],
     ['step', '5', '정량 분석 종합'],
   ]) {
     setState(action, value);
@@ -96,7 +96,7 @@ vm.runInContext(`
   setState('alert','evidence');
   setState('step','4');
   render();
-  assert.match($('view').innerHTML, /선택한 경보 지점/);
+  assert.match($('view').innerHTML, /경과구분과 월별 변화/);
   assert.ok(! $('view').innerHTML.includes(hostile));
   assert.equal(checkedEvidence().key,'evidence');
   const globalProduct = {...product,attr:''};

@@ -136,10 +136,10 @@ function parseOne(file,encoding,onBytes) {
     const stream=file.stream().getReader();
     let schema, width, month=null, bytes=0, rows=0, totalRows=0, detailRows=0, reported=0, measureMismatch=0;
     const hint=namedMonth(file.name??'');
-    const totals=[0,0], details=[0,0], map=new Map();
+    const totals=[0,0], details=[0,0], map=new Map(), leaves=new Map();
     function addScope(level,p,c,b,r,elapsed,detailCode,prem,pnl){
       const key=tuple([level,p.g,c,p.code,p.attr,b,r,elapsed,detailCode]);
-      addPoint(map,{level,key,p,c,b,r,elapsed,detailCode},prem,pnl);
+      addPoint(level==='leaf'?leaves:map,{level,key,p,c,b,r,elapsed,detailCode},prem,pnl);
     }
     const scanner=makeScanner((cells,num)=>{
       if(!schema){schema=byHeader(cells);width=cells.length;return;}
@@ -182,13 +182,24 @@ function parseOne(file,encoding,onBytes) {
         if(!inRange(totalsMeasures[0],prem)||!inRange(totalsMeasures[1],pnl)) measureMismatch++;
       }
       for(const [bn,bp,bq] of measures){
+        // Keep observed zeroes and the two independent breakdowns for presentation.
+        // They are not additional money in the portfolio or additional alert points.
+        const leafProduct={...p,attr:scopedAttrs};
+        addScope('leaf',leafProduct,c,bn,r,'','',bp,bq);
+        const leaf=leaves.get(tuple(['leaf',p.g,c,p.code,scopedAttrs,bn,r,'','']));
+        leaf.breakdowns ??= {fine:new Map(),durations:new Map()};
+        for(const [axis,value] of [['fine',detail],['durations',elapsed]]){
+          if(!value)continue;
+          const parts=leaf.breakdowns[axis];
+          if(!parts.has(value))parts.set(value,[0,0]);
+          add(parts.get(value),bp,bq);
+        }
         if(bp===0&&bq===0)continue;
         // Do not include overlapping broad-benefit subtotal columns or subtotal duration rows.
         addScope('benefit',p,c,bn,'','','',bp,bq);
         addScope('contract',p,c,bn,r,'','',bp,bq);
         addScope('child',p,c,bn,r,'',detail,bp,bq);
         addScope('elapsedContract',p,c,bn,r,elapsed,'',bp,bq);
-        addScope('leaf',{...p,attr:scopedAttrs},c,bn,r,'','',bp,bq);
       }
     });
     function decode(chunk,opts){
@@ -215,7 +226,7 @@ function parseOne(file,encoding,onBytes) {
       if(x<=0 || totals[1]/totals[0]-y/x<0.3-1e-10) map.delete(key);
     }
     const hasBenefit=!!schema.wide||schema.benefit>=0, hasContract=schema.contract>=0||schema.contractType>=0;
-    return {month,rows,totalRows,detailRows,totals,balanced,measureMismatch,encoding,map,hasBenefit,hasContract};
+    return {month,rows,totalRows,detailRows,totals,balanced,measureMismatch,encoding,map,leaves,hasBenefit,hasContract};
  })();
 }
 async function parseFallback(file,onBytes){
@@ -268,14 +279,22 @@ function combine(reports){
    if(id===undefined){id=products.length+1;ids.set(key,id);products.push({...p,id});}
    return {...p,id};
  };
- function seriesFor(key){
-  return reports.map((x,i)=>{const [p,q]=x.map.get(key)?.amounts??[0,0];return {month:months[i],prem:p/100,pnl:q/100};});
+ function seriesFor(key,source='map'){
+  return reports.map((x,i)=>{const entry=x[source].get(key);const [p,q]=entry?.amounts??[0,0];return {month:months[i],prem:p/100,pnl:q/100,observed:!!entry};});
  }
  const leafKeys=new Map();
- for (const {map} of reports) for(const [key,p] of map) if(p.level==='leaf') leafKeys.set(key,p);
+ for (const {leaves} of reports) for(const [key,p] of leaves) leafKeys.set(key,p);
  for(const [key,s] of leafKeys){
    const p=getProduct(s.p); const {c,b,r}=s; groups.add(p.g);channels.add(c);benefits.add(b);riders.add(r);attrs.add(p.attr);
-   segments.push({key,p,c,b,r,series:seriesFor(key)});
+   const breakdowns={};
+   for(const axis of ['fine','durations']){
+     const values=new Set(reports.flatMap(x=>[...(x.leaves.get(key)?.breakdowns?.[axis]?.keys()??[])]));
+     breakdowns[axis]=[...values].map(value=>({value,series:reports.map((x,i)=>{
+       const amounts=x.leaves.get(key)?.breakdowns?.[axis]?.get(value);
+       return {month:months[i],prem:amounts?amounts[0]/100:0,pnl:amounts?amounts[1]/100:0,observed:!!amounts};
+     })}));
+   }
+   segments.push({key,p,c,b,r,series:seriesFor(key,'leaves'),...breakdowns});
  }
  const found=new Map();
  const fields=['product','benefit','contract','child','elapsedContract','simple','low','attr'];
