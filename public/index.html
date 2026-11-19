@@ -18,6 +18,24 @@ main{padding-top:68px!important;padding-bottom:18px!important}.toolbar{display:f
 @media(max-width:720px){.frame{padding-left:14px;padding-right:14px}.headtop{gap:8px}.brand-note{display:none}.tabs{gap:17px}main{padding-top:24px!important}.toolbar{margin-bottom:18px}.source-note{flex-basis:100%;margin-top:3px}.panel{padding:15px 12px;border-radius:14px}.headline-count{align-items:flex-start;gap:12px;flex-wrap:wrap}.split{gap:7px 12px}.case{margin-left:0}.path{gap:7px}.path .scope-detail{margin-left:0;flex-basis:100%}.headline-count .ct strong{font-size:34px}.chart-row{grid-template-columns:59px 1fr 65px}.scroll table:not(.matrix):not(.attribute){min-width:610px}}
 .import-tools{margin:-20px 0 24px;padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--sub);font-size:12px}.import-tools summary{cursor:pointer;font-weight:650;color:var(--ink)}.import-tools p{margin:7px 0}.import-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0}.import-actions input{float:none;width:min(100%,320px);font-size:12px}.import-status[data-kind="error"]{color:#99483c}.import-status[data-kind="done"]{color:#28634b}.tag.local{background:#eef1fb;color:#304a7c}.scroll{max-width:100%}.matrix td,.matrix th{overflow-wrap:anywhere}.matrix .cell{min-width:74px}.tiny-controls select{max-width:170px}
 @media(max-width:720px){.import-tools{margin:-8px 0 18px}.tiny-controls select{max-width:125px}}
+/* Optional black palette; the original light theme stays the default. */
+body[data-theme="black"]{color-scheme:dark;--bg:#0b0b0c;--card:#151517;--soft:#1e1e21;--ink:#f1f1f2;--sub:#b9bbbf;--line:#34343a;--accent:#f1a69a;--focus:#90baff}
+body[data-theme="black"] :is(header,.panel,.path,.import-tools,.tag,.pill){background:var(--card);border-color:var(--line);color:var(--ink)}
+body[data-theme="black"] :is(.tabs button,.source-note,.ct small,.split,.rule,.search-line span,td small,th small,.stacked small,.crumb small,.sep,.path .scope-detail,.bottom-nav,.kpi-label,.cell small,.tile small,.tile p,footer){color:var(--sub)}
+body[data-theme="black"] .tabs button.active{color:var(--ink);border-bottom-color:var(--ink)}
+body[data-theme="black"] :is(.split b,.toolbar .pill b,.toolbar .pill select,.matrix th){color:var(--ink)}
+body[data-theme="black"] :is(.tiny-controls select,.search-line input,.minor,.link,.primary,.empty,.card,thead th,.attribute thead th,.matrix .cell,.tile,.bar-track){background:var(--soft);border-color:var(--line);color:var(--ink)}
+body[data-theme="black"] :is(.minor,.link,.primary):hover,body[data-theme="black"] tr:hover td{background:#252529}
+body[data-theme="black"] .case{background:#16303a!important;border-color:#364c54!important;color:#d2edf7}
+body[data-theme="black"] .badge{background:#342b1c;border-color:#584527;color:#f2d399}
+body[data-theme="black"] .badge.b{background:#3b2626;border-color:#67403c;color:#f2aba1}
+body[data-theme="black"] :is(.matrix .cell.hot,.tile.hot){background:#362427;border-color:#67403c;color:var(--accent)}
+body[data-theme="black"] .matrix .cell.cool{background:#18312b;border-color:#345c51;color:#a7e6ca}
+body[data-theme="black"] :is(.good,.import-status[data-kind="done"]){color:#a7e6ca}
+body[data-theme="black"] :is(.bad,.import-status[data-kind="error"]){color:var(--accent)}
+body[data-theme="black"] .tag.local{background:#242f48;border-color:#3f5480;color:#d3e0ff}
+body[data-theme="black"] .bar{background:#d28e82}
+body[data-theme="black"] input::placeholder{color:var(--sub)}
 </style>
 </head>
 <body>
@@ -521,7 +539,7 @@ function render(){
  $('kpis').innerHTML='<div class="ct"><strong>'+cnt+'</strong><span><b>개 후보</b><small>중복 제외</small></span></div><div class="split"><span>A · 지속 악화 <b>'+a+'개</b></span><span>B · 최근 급격 악화 <b>'+b+'개</b></span><span class="both">두 조건 모두 '+both+'개</span></div>'+(example?btn('가상 사례 보기','example',example.key,'link case'):'');
  renderAlerts();
  $('tabs').innerHTML=['경보 후보',...STEPS.map((s,i)=>(i+1)+' · '+s)].map((label,j)=>'<button type="button" data-action="step" data-value="'+(j-1)+'" class="'+(state.stage===j-1?'active':'')+'" '+(state.stage===j-1?'aria-current="page"':'')+'>'+esc(label)+'</button>').join('');
- const filter=options('분석월','mi',MONTHS.map((m,i)=>[i,m.replace('-', '년 ')+'월']),state.mi)+options('배경색','theme',[['','테마 기본'],['white','흰색'],['mist','옅은 청회색']],state.theme);
+ const filter=options('분석월','mi',MONTHS.map((m,i)=>[i,m.replace('-', '년 ')+'월']),state.mi)+options('배경색','theme',[['','테마 기본'],['white','흰색'],['mist','옅은 청회색'],['black','블랙']],state.theme);
  const scopes=isAlert?'':'<div class="tiny-controls">'+options('상품군','g',GROUPS.map(g=>[g,g]),state.g,'전체 상품군')+options('채널','c',CHANNELS.map(c=>[c,c]),state.c,'전체 채널')+options('상품','p',filterProducts().map(p=>[p.id,p.name]),state.p,'전체 상품')+'</div>';
  $('filters').innerHTML=filter+'<span class="pill">발표용</span><span class="source-note">'+(imported?'로컬 CSV · 이 탭에서만 표시':'합성 데이터 · 실제 업무자료 아님')+'</span>'+scopes;
  $('dataMode').textContent=imported?'PC에서 불러온 데이터':'합성 데이터';
