@@ -54,10 +54,11 @@ async function run(){
    assert.match($('view').innerHTML,/2025년 6월/);
    assert.match($('view').innerHTML,/같은 코드의 월별 변화/);
    assert.match($('view').innerHTML,/128.00/);
+   defaultData={months:MONTHS,groups:GROUPS,channels:CHANNELS,products:PRODUCTS,benefits:BENEFITS,segments:SEGMENTS,baseline:BASE,candidates:CANDIDATES,meta:importedMeta};
    resetCsv();render();
-   assert.equal(imported,false);
-   assert.equal(CANDIDATES.length,6);
-   assert.equal(MONTHS[2],'2027-03');
+   assert.equal(usingDefault,true);
+   assert.equal(CANDIDATES.length,1);
+   assert.equal(MONTHS[2],'2025-06');
  `,browser);
  console.log('Passed: embedded worker, file-order independence, app integration, alert details, clear, no network APIs');
 }
